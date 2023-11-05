@@ -611,53 +611,57 @@ public class PanelGrid extends JPanel {
                 System.out.println("old :"+formerValue+" new : "+newValue);
 
                 checkGridState(formerValue, newValue);
-            }else if(evt.getPropertyName().equals("clue")){
+            }else if(evt.getPropertyName().equals("clueHandling")){
                 System.out.println("we are there apparently");
                 ObservableActionThing obsSource = (ObservableActionThing) evt.getSource();
+                int clueValue = (int) evt.getOldValue();
+                boolean newState = (boolean) evt.getNewValue();
                 PanelNumber panelSource = getPanelFromCoords(obsSource.getxCord(), obsSource.getyCord());
+
+
+                //TODO WE NEED A NEW ADDACTION METHOD TO ADD CLUEMETHODS
+//                actionHandler.addActionToList(panelSource, formerValue, newValue);
+
+
                 if (!checkCoherence){
-                    String msg = "Changement case "+(panelSource.coordX+1)+", "+(panelSource.coordY+1);
+                    String msg = "Indice case "+(panelSource.coordX+1)+", "+(panelSource.coordY+1);
                     msg = "<html><body>" + msg;
                     msg = msg + "<br>";
-                    if (formerValue == 0){
-                        msg = msg + "vide  ==> ";
+                    if (newState == true){
+                        msg = msg + "ajout de l'indice : "+clueValue;
                     }else{
-                        msg = msg + formerValue+"  ==> ";
+                        msg = msg + " retrait de l'indice : "+clueValue;
                     }
-                    if (newValue == 0){
-                        msg = msg + "vide";
-                    }else {
-                        msg = msg + newValue;
-                    }
+
                     msg = msg + "</body></html>";
-
-
-
-                    //checking and greying up already existing PlayPanels
-                    updatePanelsEnabling(newValue, formerValue, panelSource);
-
-
+//
+//
+//
+//                    //checking and greying up already existing PlayPanels
+//                    updatePanelsEnabling(newValue, formerValue, panelSource);
+//
+//
                     Message message = new Message(msg, 1, null);
-
-                    //we get last element that we just added to put in button method
-
+//
+//                    //we get last element that we just added to put in button method
+//
                     HashMap<String, Object> action = actionHandler.actionList.get(actionHandler.actionList.size()-1);
-
+//
                     PlayPanelButtonListener watcher = new PlayPanelButtonListener();
                     PanelCloseListener closeListener = new PanelCloseListener();
                     panelMessages.addMessageUndo(message, action, watcher, closeListener);
-
-                    //check here for gamestate
-
-                    System.out.println(panelSource.getValue());
-                    System.out.println(evt.getNewValue());
-                    checkGridState(panelSource.getValue(), (int)evt.getNewValue());
-
-
-
-
+//
+//                    //check here for gamestate
+//
+//                    System.out.println(panelSource.getValue());
+//                    System.out.println(evt.getNewValue());
+//                    checkGridState(panelSource.getValue(), (int)evt.getNewValue());
+//
+//
+//
+//
                 }
-
+//
 
 
             }

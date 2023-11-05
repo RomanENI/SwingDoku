@@ -41,6 +41,10 @@ public class ObservableActionThing {
             support.firePropertyChange("clue", false, true);
         }
 
+        public void panelClueHandling(int clueValue, boolean newState){
+            support.firePropertyChange("clueHandling", clueValue, newState);
+        }
+
 
         public int getValue(){
             return this.value;

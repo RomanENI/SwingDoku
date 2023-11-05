@@ -758,6 +758,7 @@ public class PanelNumber extends JPanel {
         }
         this.getClueHolder().getDisplayedClues()[value-1] = true;
         this.getClueHolder().placeClue(value);
+        observer.panelClueHandling(value, true);
 
 
 

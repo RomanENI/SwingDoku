@@ -56,7 +56,7 @@ public class SplashJava extends JFrame {
             @Override
             public void run() {
                 try {
-                    // Make JWindow appear for 10 seconds before disappear
+                    // Make JWindow appear for 3 seconds before disappear
                     Thread.sleep(3000);
 //                    setVisible(false);
                     dispose();
