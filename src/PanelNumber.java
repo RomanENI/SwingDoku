@@ -238,6 +238,8 @@ public class PanelNumber extends JPanel {
             this.setImageLocked(this.imgsLocked.get(this.value - 1));
         }
 
+        this.getClueHolder().updateImgs();
+
     }
 
 
@@ -753,8 +755,22 @@ public class PanelNumber extends JPanel {
 
 
         ObservableActionThing observer = this.getObs();
-        if (!this.isClueMode()){
-            observer.panelGoesToClueMode();
+        //if we were not yet in clueMode, we are setting up the visuals with the empty panels on clueHolder.
+        if (!this.isClueMode()) {
+            ArrayList<JPanel> currentlyDisplayed = this.getClueHolder().getCurrentlyDisplayedPanels();
+            boolean[] displayedClues = this.getClueHolder().getDisplayedClues();
+
+            for (int i = 0; i < 9; i++) {
+                JPanel panel = currentlyDisplayed.get(i);
+                BorderLayout layout = (BorderLayout) panel.getLayout();
+                panel.remove(layout.getLayoutComponent(BorderLayout.CENTER));
+                JLabel replaceLbl;
+                replaceLbl = new JLabel(imgsSmall.get(0));
+                panel.add(replaceLbl, BorderLayout.CENTER);
+                this.revalidate();
+                this.repaint();
+
+            }
         }
         this.getClueHolder().getDisplayedClues()[value-1] = true;
         this.getClueHolder().placeClue(value);
@@ -1106,7 +1122,13 @@ public class PanelNumber extends JPanel {
         this.clueHolder = clueHolder;
     }
 
+    public ArrayList<ImageIcon> getImgsSmallFocussed() {
+        return imgsSmallFocussed;
+    }
 
+    public void setImgsSmallFocussed(ArrayList<ImageIcon> imgsSmallFocussed) {
+        this.imgsSmallFocussed = imgsSmallFocussed;
+    }
 
 
 
@@ -1199,6 +1221,9 @@ public class PanelNumber extends JPanel {
             this.imgsSmallFocusForHolder = imgsSmallFocussed;
         }
 
+        public void choucroute(){
+            System.out.println("choucroute hééhé");
+        }
 
 
 

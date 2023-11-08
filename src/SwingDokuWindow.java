@@ -1123,6 +1123,7 @@ public class SwingDokuWindow extends JFrame {
             pan.setImgsFocus(theme.getImgsFocussed());
             pan.setImgsSmall(theme.getImgsSmall());
             pan.setImgsLocked(theme.getImgsLocked());
+            pan.setImgsSmallFocussed(theme.getImgsSmallAndFocussed());
             pan.updateTheme();
             pan.setFrameColorIn(theme.getFrameColor());
             pan.setFrameColorOut(theme.getCentralPanelGapsColor());

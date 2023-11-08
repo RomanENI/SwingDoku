@@ -612,11 +612,12 @@ public class PanelGrid extends JPanel {
 
                 checkGridState(formerValue, newValue);
             }else if(evt.getPropertyName().equals("clueHandling")){
-                System.out.println("we are there apparently");
                 ObservableActionThing obsSource = (ObservableActionThing) evt.getSource();
+                PanelNumber panelSource = getPanelFromCoords(obsSource.getxCord(), obsSource.getyCord());
+                System.out.println("we are there apparently");
+                System.out.println("we were clue mode already : "+panelSource.isClueMode());
                 int clueValue = (int) evt.getOldValue();
                 boolean newState = (boolean) evt.getNewValue();
-                PanelNumber panelSource = getPanelFromCoords(obsSource.getxCord(), obsSource.getyCord());
 
 
                 //TODO WE NEED A NEW ADDACTION METHOD TO ADD CLUEMETHODS

@@ -37,9 +37,6 @@ public class ObservableActionThing {
             this.value = newValue;
         }
 
-        public void panelGoesToClueMode(){
-            support.firePropertyChange("clue", false, true);
-        }
 
         public void panelClueHandling(int clueValue, boolean newState){
             support.firePropertyChange("clueHandling", clueValue, newState);
