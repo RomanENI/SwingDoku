@@ -17,7 +17,16 @@ public class Game {
 
         SDLogicCenter logic = new SDLogicCenter();
         this.gridsolutions = new ArrayList<>();
-        this.startingPosition = board;
+
+
+        //here we MUST manually copy board
+        this.startingPosition = new int[9][9];
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                this.startingPosition[j][i] = board[j][i];
+            }
+        }
+
         logic.upToXSolutions(board, gridsolutions, extremelyImpureThreshold);
         if (this.gridsolutions.size() == extremelyImpureThreshold){
             this.isExtremelyImpure = true;

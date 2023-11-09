@@ -300,6 +300,24 @@ public class PanelGrid extends JPanel {
     }
 
 
+    public void displayModeToPanelNumbers(){
+        this.removeAll();
+        this.setLayout(new GridBagLayout());
+        GridBagConstraints gb = new GridBagConstraints();
+        for (PanelNumber pan : panels){
+            gb.gridy = pan.getCoordY();
+            gb.gridx = pan.getCoordX();
+            this.add(pan, gb);
+        }
+        this.revalidate();
+        this.repaint();
+
+
+
+    }
+
+
+
     public void swapActionHandler() {
         if(this.actionHandler == playActionHandler){
             this.setActionHandler(this.buildActionHandler);
@@ -314,9 +332,15 @@ public class PanelGrid extends JPanel {
         for (PanelNumber pan : this.getPanels()){
             BorderLayout layout = (BorderLayout)pan.getLayout();
             pan.remove(layout.getLayoutComponent(BorderLayout.CENTER));
-            if (pan.isLocked()){
+            if (pan.isLocked()) {
                 JLabel lbl = new JLabel(pan.getImageLocked());
                 pan.add(lbl, BorderLayout.CENTER);
+            }else if(pan.isClueMode()){
+                pan.updateClueHolderTheme();
+                pan.add(pan.getClueHolder(), BorderLayout.CENTER);
+
+
+
             }else{
                 JLabel lbl = new JLabel(getLoadedNumberIcons().get(pan.getValue()));
                 pan.add(lbl, BorderLayout.CENTER);
@@ -335,7 +359,6 @@ public class PanelGrid extends JPanel {
         for (PanelNumber pan : panels){
             if (pan.isLocked()){
                 pan.unlockPanel();
-                System.out.println("unlock");
             }
         }
     }
@@ -642,15 +665,15 @@ public class PanelGrid extends JPanel {
 //                    updatePanelsEnabling(newValue, formerValue, panelSource);
 //
 //
-                    Message message = new Message(msg, 1, null);
-//
-//                    //we get last element that we just added to put in button method
-//
-                    HashMap<String, Object> action = actionHandler.actionList.get(actionHandler.actionList.size()-1);
-//
-                    PlayPanelButtonListener watcher = new PlayPanelButtonListener();
-                    PanelCloseListener closeListener = new PanelCloseListener();
-                    panelMessages.addMessageUndo(message, action, watcher, closeListener);
+//                    Message message = new Message(msg, 1, null);
+////
+////                    //we get last element that we just added to put in button method
+////
+//                    HashMap<String, Object> action = actionHandler.actionList.get(actionHandler.actionList.size()-1);
+////
+//                    PlayPanelButtonListener watcher = new PlayPanelButtonListener();
+//                    PanelCloseListener closeListener = new PanelCloseListener();
+//                    panelMessages.addMessageUndo(message, action, watcher, closeListener);
 //
 //                    //check here for gamestate
 //
@@ -748,11 +771,18 @@ public class PanelGrid extends JPanel {
         return counter <= 1;
     }
 
+    public void setAllPansToCertitude(){
+        for (PanelNumber pan : panels){
+            if (pan.isClueMode()){
+                pan.setClueMode(false);
+            }
+        }
+    }
+
 
     public PanelNumber getPanelFromCoords(int coordX, int coordY){
-        Component[] allComponents = this.getComponents();
-        for (Component panel: allComponents
-        ) {
+
+        for (PanelNumber panel: panels) {
             PanelNumber pan = (PanelNumber)panel;
             if (pan.coordX == coordX && pan.coordY == coordY) {
                 return pan;

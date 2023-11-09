@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 public class Theme {
 
 
+    private static final int gridSquareWidthHeight = 648;
     private String path;
     private JLabel imgLeftPanel;
     private JLabel lblOptionPanel;
@@ -57,17 +58,7 @@ public class Theme {
     }
 
     private void loadImageWinScreen(String pathStart) {
-        BufferedImage img = null;
-        try {
-            img = ImageIO.read(new File(pathStart+"/panels/optionPanel/optionPanelPicture.jpg"));
-            Image dimg = img.getScaledInstance(540, 540,Image.SCALE_SMOOTH);
-            ImageIcon imageIcon = new ImageIcon(pathStart+"/winScreen/win.gif");
-            this.imgWinScreen = imageIcon;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        this.imgWinScreen = new ImageIcon(pathStart+"/winScreen/win.gif");
     }
 
     private BufferedImage getBufferedImgWinScreen(String pathStart){

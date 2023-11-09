@@ -238,8 +238,14 @@ public class PanelNumber extends JPanel {
             this.setImageLocked(this.imgsLocked.get(this.value - 1));
         }
 
+        updateClueHolderTheme();
+
+    }
+
+    public void updateClueHolderTheme(){
         this.getClueHolder().updateImgs();
 
+        setClueHolderToNormal();
     }
 
 
@@ -467,25 +473,29 @@ public class PanelNumber extends JPanel {
 
 
             //clueMode is true
-            ArrayList<JPanel> currentlyDisplayed = this.getClueHolder().getCurrentlyDisplayedPanels();
-            boolean[] displayedClues = this.getClueHolder().getDisplayedClues();
-
-            for (int i = 0; i < 9; i++) {
-                JPanel panel = currentlyDisplayed.get(i);
-                BorderLayout layout = (BorderLayout) panel.getLayout();
-                panel.remove(layout.getLayoutComponent(BorderLayout.CENTER));
-                JLabel replaceLbl;
-                if (displayedClues[i]){
-                    replaceLbl = new JLabel(imgsSmall.get(i + 1));
-                }else{
-                    replaceLbl = new JLabel(imgsSmall.get(0));
-                }
-                panel.add(replaceLbl, BorderLayout.CENTER);
-                this.revalidate();
-                this.repaint();
-            }
+            setClueHolderToNormal();
         }
 
+    }
+
+    private void setClueHolderToNormal() {
+        ArrayList<JPanel> currentlyDisplayed = this.getClueHolder().getCurrentlyDisplayedPanels();
+        boolean[] displayedClues = this.getClueHolder().getDisplayedClues();
+
+        for (int i = 0; i < 9; i++) {
+            JPanel panel = currentlyDisplayed.get(i);
+            BorderLayout layout = (BorderLayout) panel.getLayout();
+            panel.remove(layout.getLayoutComponent(BorderLayout.CENTER));
+            JLabel replaceLbl;
+            if (displayedClues[i]){
+                replaceLbl = new JLabel(imgsSmall.get(i + 1));
+            }else{
+                replaceLbl = new JLabel(imgsSmall.get(0));
+            }
+            panel.add(replaceLbl, BorderLayout.CENTER);
+            this.revalidate();
+            this.repaint();
+        }
     }
 
 
@@ -1219,12 +1229,9 @@ public class PanelNumber extends JPanel {
         public void updateImgs(){
             this.imgsSmallForHolder = imgsSmall;
             this.imgsSmallFocusForHolder = imgsSmallFocussed;
+            this.revalidate();
+            this.repaint();
         }
-
-        public void choucroute(){
-            System.out.println("choucroute hééhé");
-        }
-
 
 
         public void removeClue(int val){

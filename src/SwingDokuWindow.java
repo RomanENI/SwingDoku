@@ -9,6 +9,7 @@ public class SwingDokuWindow extends JFrame {
 
 
 
+    public Game currentGame;
     //    JMenuBar sdMenuBar = new JMenuBar();
     SDMenuBar sdMenuBar;
     public int[][] abstractBoard;
@@ -224,6 +225,11 @@ public class SwingDokuWindow extends JFrame {
             JButton buttonTestDisplay = new JButton("Display abstractboard");
             buttonTestDisplay.addActionListener(this::displayAbstractBoard);
             panelBottom.add(buttonTestDisplay);
+            JButton buttonGameStartDisplay = new JButton("Display game start board");
+            buttonGameStartDisplay.addActionListener(this::displayGameStart);
+            panelBottom.add(buttonGameStartDisplay);
+
+
             JButton buttonReset = new JButton("Reset");
             buttonReset.addActionListener(this::resetBoard);
             panelBottom.add(buttonReset);
@@ -235,6 +241,12 @@ public class SwingDokuWindow extends JFrame {
             panelBottom.add(customGridButton);
             panelBottom.add(this.submitButton);
 
+        }
+
+        private void displayGameStart(ActionEvent actionEvent) {
+            SDLogicCenter logic = new SDLogicCenter();
+            logic.displayAbstractBoard(currentGame.getStartingPosition());
+            System.out.println("heyoooooooo");
         }
 
         private void displayAbstractBoard(ActionEvent evt){
@@ -271,6 +283,10 @@ public class SwingDokuWindow extends JFrame {
         }
 
         private void clearBoard(ActionEvent actionEvent) {
+            clearBoard();
+        }
+
+        private void clearBoard() {
             initAbstractBoard(abstractBoard,0);
             updateConcreteBoard();
             this.panelWithGrid.revalidate();
@@ -563,7 +579,6 @@ public class SwingDokuWindow extends JFrame {
                 resetActions();
 
 
-                int[][] temporaryCopy = new int[9][9];
                 for (int i = 0; i < 9; i++) {
                     for (int j = 0; j < 9; j++) {
                         abstractBoard[j][i] = abstractBuildBoard[j][i];
@@ -573,12 +588,12 @@ public class SwingDokuWindow extends JFrame {
                     pan.setLocked(false);
                 }
                 updateConcreteBoard();
-//                this.getPanelWithGrid().unlockAllPanels();
                 this.getPanelWithGrid().lockNonEmptyPanels();
 
                 //TODO
                 //we store solution(s) somewhere
-                Game game = new Game(abstractBoard);
+                currentGame = new Game(abstractBoard);
+
 
                 //we add a final listener on every panenNumbers so that when last panel is filled we can launch the submit grid procedure.
 
@@ -938,6 +953,10 @@ public class SwingDokuWindow extends JFrame {
             this.submitButton = submitButton;
         }
 
+        public int getCoteCarreLength() {
+            return coteCarreLength;
+        }
+
     }//--MainPanel------
 
     private void initiateWinSequence() {
@@ -950,7 +969,7 @@ public class SwingDokuWindow extends JFrame {
 
                 JPanel panelWin = new JPanel();
 
-                panelWin.setPreferredSize(new Dimension(540, 540));
+                panelWin.setPreferredSize(new Dimension(currentWindow.getMainPanel().getCoteCarreLength(), currentWindow.getMainPanel().getCoteCarreLength()));
                 panelWin.setLayout(new BorderLayout());
 
                 JLabel lbelle = new JLabel(theme.getImgWinScreen());
@@ -981,7 +1000,7 @@ public class SwingDokuWindow extends JFrame {
                 System.out.println("waited three second");
 
 
-                Object[] options = {"option 1",
+                Object[] options = {"Rejouer cette grille",
                         "option 2", "option 3"
                 };
                 int n = 666;
@@ -996,7 +1015,39 @@ public class SwingDokuWindow extends JFrame {
 
                 optionChoice[0] = n;
                 if (optionChoice[0] == 0){
+                    mainPanel.resetActions();
+                    //We need a method to remove panel messages
+                    for (JPanel pan : mainPanel.getRightPanel().getListPanels()){
+                        mainPanel.getRightPanel().getPanelInScroller().remove(pan);
+
+                    }
+                    mainPanel.getRightPanel().getPanelInScroller().revalidate();
+                    mainPanel.getRightPanel().getPanelInScroller().repaint();
+                    mainPanel.getRightPanel().revalidate();
+                    mainPanel.getRightPanel().repaint();
+                    mainPanel.getPanelWithGrid().setAllPansToCertitude();
+                    mainPanel.clearBoard();
+                    mainPanel.getPanelWithGrid().unlockAllPanels();
+                    SDLogicCenter logic = new SDLogicCenter();
+                    //copie manuelle de abstractBoard
+                    int[][] temporaryCopy = currentGame.getStartingPosition();
+                    for (int j = 0; j < 9; j++) {
+                        for (int i = 0; i < 9; i++) {
+                            abstractBoard[j][i] = temporaryCopy[j][i];
+                        }
+                    }
+
+
+
+
+
+                    mainPanel.getPanelWithGrid().displayModeToPanelNumbers();
+                    mainPanel.updateConcreteBoard();
+                    mainPanel.getPanelWithGrid().lockNonEmptyPanels();
+
                     System.out.println("option 1 was picked");
+
+
                 }else if (optionChoice[0] == 1){
                     System.out.println("option 2 was picked");
                 }else if (optionChoice[0] == 2){
