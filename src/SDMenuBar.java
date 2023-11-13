@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -16,6 +17,8 @@ public class SDMenuBar extends JMenuBar{
 
 
     private JMenuItem menuItemAncientRome;
+
+
 
     private final JMenu menuMode;
 
@@ -80,6 +83,15 @@ public class SDMenuBar extends JMenuBar{
     }
 
 
+    public void setAllMenusTo(boolean mode){
+        Component[] menus = this.getComponents();
+        for (Component item : menus){
+            if (item instanceof JMenu){
+                item.setEnabled(mode);
+            }
+        }
+    }
+
     public void enableUndo(){
         this.getUndo().setEnabled(true);
     }
@@ -135,5 +147,8 @@ public class SDMenuBar extends JMenuBar{
         return certitude;
     }
 
+    public JMenu getMenuMode() {
+        return menuMode;
+    }
 
 }

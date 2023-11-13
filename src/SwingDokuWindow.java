@@ -1,7 +1,10 @@
 import javax.swing.*;
+import javax.swing.text.Position;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -161,6 +164,7 @@ public class SwingDokuWindow extends JFrame {
             panelLeft.setPreferredSize(dimLeftPanel);
 
             buildLayout(panelLeft, panelCenter, panelRight);
+
 
 
         }
@@ -671,6 +675,17 @@ public class SwingDokuWindow extends JFrame {
 
         }
 
+
+        private void setAllButtonsTo(boolean mode){
+            Component[] buttons = this.getBottomPanel().getComponents();
+            for (Component item : buttons){
+                if (item instanceof JButton){
+                    item.setEnabled(mode);
+                }
+            }
+        }
+
+
         private boolean testGridMultiplePossibilities(ActionEvent event) {
             //make temporary copy of board and attempt to solve it
             SDLogicCenter logic = new SDLogicCenter();
@@ -990,6 +1005,34 @@ public class SwingDokuWindow extends JFrame {
         new Thread(new Runnable() {
             @Override
             public void run() {
+
+                //here we have to disable all actionable buttons for the user in order to prevent monstruous bugs
+//
+                sdMenuBar.setAllMenusTo(false);
+                mainPanel.setAllButtonsTo(false);
+
+
+                final JOptionPane optionPane = new JOptionPane(
+                        "The only way to close this dialog is by\n"
+                                + "pressing one of the following buttons.\n"
+                                + "Do you understand?",
+                        JOptionPane.QUESTION_MESSAGE,
+                        JOptionPane.YES_NO_OPTION);
+
+
+                Window window = SwingUtilities.windowForComponent( mainPanel );
+
+                final JDialog dialog = new JDialog((Frame) window,
+                        "Click a button",
+                        true);
+                dialog.setPreferredSize(new Dimension(400, 400));
+                Point centerPoint = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
+                dialog.setLocation(centerPoint);
+                dialog.setContentPane(optionPane);
+                dialog.pack();
+                dialog.setVisible(true);
+
+
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException e) {
@@ -1000,59 +1043,67 @@ public class SwingDokuWindow extends JFrame {
                 System.out.println("waited three second");
 
 
-                Object[] options = {"Rejouer cette grille",
-                        "option 2", "option 3"
-                };
-                int n = 666;
-                n = JOptionPane.showOptionDialog(mainPanel.getPanelWithGrid(),
-                        "Bravo",
-                        "Immense triomphe",
-                        JOptionPane.YES_NO_CANCEL_OPTION,
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        options,
-                        options[2]);
-
-                optionChoice[0] = n;
-                if (optionChoice[0] == 0){
-                    mainPanel.resetActions();
-                    //We need a method to remove panel messages
-                    for (JPanel pan : mainPanel.getRightPanel().getListPanels()){
-                        mainPanel.getRightPanel().getPanelInScroller().remove(pan);
-
-                    }
-                    mainPanel.getRightPanel().getPanelInScroller().revalidate();
-                    mainPanel.getRightPanel().getPanelInScroller().repaint();
-                    mainPanel.getRightPanel().revalidate();
-                    mainPanel.getRightPanel().repaint();
-                    mainPanel.getPanelWithGrid().setAllPansToCertitude();
-                    mainPanel.clearBoard();
-                    mainPanel.getPanelWithGrid().unlockAllPanels();
-                    SDLogicCenter logic = new SDLogicCenter();
-                    //copie manuelle de abstractBoard
-                    int[][] temporaryCopy = currentGame.getStartingPosition();
-                    for (int j = 0; j < 9; j++) {
-                        for (int i = 0; i < 9; i++) {
-                            abstractBoard[j][i] = temporaryCopy[j][i];
-                        }
-                    }
+                // https://stackoverflow.com/questions/942056/remove-x-button-in-swing-jdialog
 
 
 
-
-
-                    mainPanel.getPanelWithGrid().displayModeToPanelNumbers();
-                    mainPanel.updateConcreteBoard();
-                    mainPanel.getPanelWithGrid().lockNonEmptyPanels();
-
-                    System.out.println("option 1 was picked");
-
-
-                }else if (optionChoice[0] == 1){
-                    System.out.println("option 2 was picked");
-                }else if (optionChoice[0] == 2){
-                    System.out.println("option 3 was picked");
-                }
+//                Object[] options = {"Rejouer cette grille",
+//                        "Faire une nouvelle partie", "option 3"
+//                };
+//                int n = 666;
+//                n = JOptionPane.showOptionDialog(mainPanel.getPanelWithGrid(),
+//                        "Bravo",
+//                        "Immense triomphe",
+//                        JOptionPane.YES_NO_CANCEL_OPTION,
+//                        JOptionPane.QUESTION_MESSAGE,
+//                        null,
+//                        options,
+//                        options[2]);
+//
+//
+//                optionChoice[0] = n;
+//                if (optionChoice[0] == 0){
+//                    mainPanel.resetActions();
+//                    //We need a method to remove panel messages
+//                    for (JPanel pan : mainPanel.getRightPanel().getListPanels()){
+//                        mainPanel.getRightPanel().getPanelInScroller().remove(pan);
+//
+//                    }
+//                    mainPanel.getRightPanel().getPanelInScroller().revalidate();
+//                    mainPanel.getRightPanel().getPanelInScroller().repaint();
+//                    mainPanel.getRightPanel().revalidate();
+//                    mainPanel.getRightPanel().repaint();
+//                    mainPanel.getPanelWithGrid().setAllPansToCertitude();
+//                    mainPanel.clearBoard();
+//                    mainPanel.getPanelWithGrid().unlockAllPanels();
+//                    SDLogicCenter logic = new SDLogicCenter();
+//                    //copie manuelle de abstractBoard
+//                    int[][] temporaryCopy = currentGame.getStartingPosition();
+//                    for (int j = 0; j < 9; j++) {
+//                        for (int i = 0; i < 9; i++) {
+//                            abstractBoard[j][i] = temporaryCopy[j][i];
+//                        }
+//                    }
+//
+//
+//
+//
+//
+//                    mainPanel.getPanelWithGrid().displayModeToPanelNumbers();
+//                    mainPanel.updateConcreteBoard();
+//                    mainPanel.getPanelWithGrid().lockNonEmptyPanels();
+//
+//                    System.out.println("option 1 was picked");
+//
+//
+//                }else if (optionChoice[0] == 1){
+//                    System.out.println("option 2 was picked");
+//                }else if (optionChoice[0] == 2){
+//                    System.out.println("option 3 was picked");
+//                }
+//
+//                sdMenuBar.setAllMenusTo(true);
+//                mainPanel.setAllButtonsTo(true);
             }
 
         }).start();
