@@ -1,10 +1,7 @@
 import javax.swing.*;
 import javax.swing.text.Position;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -1011,13 +1008,16 @@ public class SwingDokuWindow extends JFrame {
                 sdMenuBar.setAllMenusTo(false);
                 mainPanel.setAllButtonsTo(false);
 
+                //TODO WE MUST ALSO DISABLE BUTTONS ON RIGHT PANE
+
 
                 final JOptionPane optionPane = new JOptionPane(
-                        "The only way to close this dialog is by\n"
-                                + "pressing one of the following buttons.\n"
-                                + "Do you understand?",
-                        JOptionPane.QUESTION_MESSAGE,
-                        JOptionPane.YES_NO_OPTION);
+                        "Bravo, vous avez résolu la grille.",
+                        JOptionPane.PLAIN_MESSAGE,
+                        JOptionPane.YES_NO_CANCEL_OPTION);
+
+
+
 
 
                 Window window = SwingUtilities.windowForComponent( mainPanel );
@@ -1025,10 +1025,28 @@ public class SwingDokuWindow extends JFrame {
                 final JDialog dialog = new JDialog((Frame) window,
                         "Click a button",
                         true);
-                dialog.setPreferredSize(new Dimension(400, 400));
+                final int IDEAL_DIALOG_X_SIZE = 400;
+                final int IDEAL_DIALOG_y_SIZE = 400;
+                dialog.setPreferredSize(new Dimension(IDEAL_DIALOG_X_SIZE, IDEAL_DIALOG_y_SIZE));
                 Point centerPoint = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
+                centerPoint.x -= IDEAL_DIALOG_X_SIZE/2;
+                centerPoint.y -= IDEAL_DIALOG_y_SIZE/2;
+
+                int a=optionPane.showConfirmDialog(dialog,"Are you sure?");
+
+
                 dialog.setLocation(centerPoint);
                 dialog.setContentPane(optionPane);
+                dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+                for (WindowListener wl : dialog.getWindowListeners()) {
+                    dialog.removeWindowListener(wl);
+                }
+                dialog.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosing(WindowEvent e) {
+                        JOptionPane.showMessageDialog(null, "Vous devez obligatoirement choisir une option : )");
+                    }
+                });
                 dialog.pack();
                 dialog.setVisible(true);
 

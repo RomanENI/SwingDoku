@@ -170,6 +170,7 @@ public class PanelNumber extends JPanel {
         this.addMouseListener(mouseReleasedAdapter);
 
 
+
         focusListener = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
