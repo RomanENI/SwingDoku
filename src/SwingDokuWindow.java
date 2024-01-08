@@ -1009,16 +1009,16 @@ public class SwingDokuWindow extends JFrame {
                 mainPanel.setAllButtonsTo(false);
 
                 //TODO WE MUST ALSO DISABLE BUTTONS ON RIGHT PANE
-
+                //TODO MAKE MODAL FROM SCRACH ONLY WAY
+                //https://stackoverflow.com/questions/36070163/java-wait-for-user-input-on-swing-window
 
                 final JOptionPane optionPane = new JOptionPane(
                         "Bravo, vous avez résolu la grille.",
                         JOptionPane.PLAIN_MESSAGE,
                         JOptionPane.YES_NO_CANCEL_OPTION);
 
-
-
-
+                optionPane.setOptions(new String[]{"yes", "No", "Maybe"});
+                        
 
                 Window window = SwingUtilities.windowForComponent( mainPanel );
 
@@ -1031,8 +1031,6 @@ public class SwingDokuWindow extends JFrame {
                 Point centerPoint = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
                 centerPoint.x -= IDEAL_DIALOG_X_SIZE/2;
                 centerPoint.y -= IDEAL_DIALOG_y_SIZE/2;
-
-                int a=optionPane.showConfirmDialog(dialog,"Are you sure?");
 
 
                 dialog.setLocation(centerPoint);
@@ -1056,6 +1054,8 @@ public class SwingDokuWindow extends JFrame {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
+
+
 
 
                 System.out.println("waited three second");
