@@ -7,7 +7,9 @@ public class TestClass {
 
     public static void main(String args[]){
 
-
+        CustomDialog dial = new CustomDialog();
+        int carotte = dial.show();
+        System.out.println(carotte);
     }
 
 

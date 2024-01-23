@@ -12,7 +12,7 @@ public class CustomDialog
     private String[] options;
     private int optionIndex;
 
-    private CustomDialog()
+    public CustomDialog()
     {
         components = new ArrayList<JComponent>();
 
@@ -21,6 +21,7 @@ public class CustomDialog
         setRootPane(null);
         setOptions(new String[] { "OK", "Cancel" });
         setOptionSelection(0);
+
 
     }
 
@@ -85,5 +86,6 @@ public class CustomDialog
 
 
 
+    // https://stackoverflow.com/questions/942056/remove-x-button-in-swing-jdialog
 
 }
