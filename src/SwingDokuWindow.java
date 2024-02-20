@@ -1,22 +1,20 @@
 import javax.swing.*;
-import javax.swing.text.Position;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class SwingDokuWindow extends JFrame {
 
 
-
+    SwingDokuWindow zis = this;
     public Game currentGame;
     //    JMenuBar sdMenuBar = new JMenuBar();
     SDMenuBar sdMenuBar;
     public int[][] abstractBoard;
     public MainPanel mainPanel;
 
-
+    private String currentTheme = "boring";
 
     public int[][] getAbstractPlayBoard() {
         return abstractPlayBoard;
@@ -54,7 +52,7 @@ public class SwingDokuWindow extends JFrame {
 
         this.setSize(mainWindowDim);
         this.setLocationRelativeTo(null);
-        this.loadTheme("boring");
+        this.loadTheme(currentTheme);
         this.pack();
         this.setVisible(true);
     } // fin du constructeur SwingDokuWindow
@@ -66,12 +64,14 @@ public class SwingDokuWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 loadTheme("boring");
+                currentTheme = "boring";
             }
         });
         this.sdMenuBar.getMenuItemAncientRome().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 loadTheme("rome antique");
+                currentTheme = "rome antique";
             }
         });
 
@@ -148,7 +148,7 @@ public class SwingDokuWindow extends JFrame {
         MainPanel(){
             setupSubmitButton();
             panelRight = new PanelOnRight();
-            panelWithGrid = new PanelGrid(getSdMenuBar(), getAbstractBoard(), getRightPanel(), this.submitButton);
+            createPanelWithGrid();
             panelLeft.setBackground(Color.WHITE);
             panelWithGrid.setBackground(Color.BLUE);
             initPanelBottom();
@@ -165,6 +165,19 @@ public class SwingDokuWindow extends JFrame {
 
 
 
+        }
+
+        public JPanel createPanelWithGrid() {
+            panelWithGrid = new PanelGrid(getSdMenuBar(), getAbstractBoard(), getRightPanel(), this.submitButton);
+            return panelWithGrid;
+        }
+
+        public void replacePanelGrid(JPanel newPanel){
+            BorderLayout layout = (BorderLayout) panelCenter.getLayout();
+            panelCenter.remove(layout.getLayoutComponent(BorderLayout.PAGE_START));
+            panelCenter.add(newPanel, BorderLayout.PAGE_START);
+            panelCenter.revalidate();
+            panelCenter.repaint();
         }
 
         private void setupSubmitButton() {
@@ -228,7 +241,7 @@ public class SwingDokuWindow extends JFrame {
             buttonTestDisplay.addActionListener(this::displayAbstractBoard);
             panelBottom.add(buttonTestDisplay);
             JButton buttonGameStartDisplay = new JButton("Display game start board");
-            buttonGameStartDisplay.addActionListener(this::displayGameStart);
+            buttonGameStartDisplay.addActionListener(this::displayGameStartAction);
             panelBottom.add(buttonGameStartDisplay);
 
 
@@ -245,9 +258,18 @@ public class SwingDokuWindow extends JFrame {
 
         }
 
-        private void displayGameStart(ActionEvent actionEvent) {
+        private void displayGameStartAction(ActionEvent actionEvent) {
+            displayGameStart();
+        }
+
+        private void displayGameStart() {
             SDLogicCenter logic = new SDLogicCenter();
             logic.displayAbstractBoard(currentGame.getStartingPosition());
+
+
+
+
+
             System.out.println("heyoooooooo");
         }
 
@@ -999,61 +1021,90 @@ public class SwingDokuWindow extends JFrame {
         }).start();
 
 
-        int[] optionChoice = new int[1];
+
         new Thread(new Runnable() {
             @Override
             public void run() {
 
-                //here we have to disable all actionable buttons for the user in order to prevent monstruous bugs
+//                //here we have to disable all actionable buttons for the user in order to prevent monstruous bugs
+////
+//                sdMenuBar.setAllMenusTo(false);
+//                mainPanel.setAllButtonsTo(false);
 //
-                sdMenuBar.setAllMenusTo(false);
-                mainPanel.setAllButtonsTo(false);
+//                //TODO WE MUST ALSO DISABLE BUTTONS ON RIGHT PANE
+//
+//
+//                final JOptionPane optionPane = new JOptionPane(
+//                        "Bravo, vous avez résolu la grille.",
+//                        JOptionPane.PLAIN_MESSAGE,
+//                        JOptionPane.YES_NO_CANCEL_OPTION);
+//
+//
+//
+//
+//
+//                Window window = SwingUtilities.windowForComponent( mainPanel );
+//
+//                final JDialog dialog = new JDialog((Frame) window,
+//                        "Click a button",
+//                        true);
+//                final int IDEAL_DIALOG_X_SIZE = 400;
+//                final int IDEAL_DIALOG_y_SIZE = 400;
+//                dialog.setPreferredSize(new Dimension(IDEAL_DIALOG_X_SIZE, IDEAL_DIALOG_y_SIZE));
+//                Point centerPoint = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
+//                centerPoint.x -= IDEAL_DIALOG_X_SIZE/2;
+//                centerPoint.y -= IDEAL_DIALOG_y_SIZE/2;
+//
+//                int a=optionPane.showConfirmDialog(dialog,"Are you sure?");
+//
+//
+//                dialog.setLocation(centerPoint);
+//                dialog.setContentPane(optionPane);
+//                dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+//                for (WindowListener wl : dialog.getWindowListeners()) {
+//                    dialog.removeWindowListener(wl);
+//                }
+//                dialog.addWindowListener(new WindowAdapter() {
+//                    @Override
+//                    public void windowClosing(WindowEvent e) {
+//                        JOptionPane.showMessageDialog(null, "Vous devez obligatoirement choisir une option : )");
+//                    }
+//                });
+//                dialog.pack();
+//                dialog.setVisible(true);
 
-                //TODO WE MUST ALSO DISABLE BUTTONS ON RIGHT PANE
-
-
-                final JOptionPane optionPane = new JOptionPane(
-                        "Bravo, vous avez résolu la grille.",
-                        JOptionPane.PLAIN_MESSAGE,
-                        JOptionPane.YES_NO_CANCEL_OPTION);
 
 
 
 
-
-                Window window = SwingUtilities.windowForComponent( mainPanel );
-
-                final JDialog dialog = new JDialog((Frame) window,
-                        "Click a button",
-                        true);
-                final int IDEAL_DIALOG_X_SIZE = 400;
-                final int IDEAL_DIALOG_y_SIZE = 400;
-                dialog.setPreferredSize(new Dimension(IDEAL_DIALOG_X_SIZE, IDEAL_DIALOG_y_SIZE));
-                Point centerPoint = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
-                centerPoint.x -= IDEAL_DIALOG_X_SIZE/2;
-                centerPoint.y -= IDEAL_DIALOG_y_SIZE/2;
-
-                int a=optionPane.showConfirmDialog(dialog,"Are you sure?");
-
-
-                dialog.setLocation(centerPoint);
-                dialog.setContentPane(optionPane);
-                dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-                for (WindowListener wl : dialog.getWindowListeners()) {
-                    dialog.removeWindowListener(wl);
-                }
-                dialog.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosing(WindowEvent e) {
-                        JOptionPane.showMessageDialog(null, "Vous devez obligatoirement choisir une option : )");
-                    }
-                });
-                dialog.pack();
-                dialog.setVisible(true);
 
 
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(0001);
+                    ActionListener restartFunction = new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            JPanel pan = mainPanel.createPanelWithGrid();
+                            mainPanel.replacePanelGrid(pan);
+                            loadTheme(currentTheme);
+                            mainPanel.displayGameStartAction(e);
+                            for (int i = 0; i < 9; i++) {
+                                for (int j = 0; j < 9; j++) {
+                                    abstractBoard[j][i] = currentGame.getStartingPosition()[j][i];
+                                }
+                            }
+                            SDLogicCenter logic = new SDLogicCenter();
+                            logic.displayAbstractBoard(abstractBoard);
+                            logic.displayAbstractBoard(currentGame.getStartingPosition());
+                            mainPanel.updateConcreteBoard();
+                            mainPanel.submitButton.setEnabled(false);
+                            //reset actions
+                            getMainPanel().getPanelWithGrid().playActionHandler.clearActions();
+                            getMainPanel().getRightPanel().goModePlay();
+                        }
+                    };
+                    ModalRestartOrReplayDialog modal = new ModalRestartOrReplayDialog(restartFunction);
+                    modal.createAndShowGUI(zis);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -1308,97 +1359,6 @@ public class SwingDokuWindow extends JFrame {
         }
 
     }
-
-
-
-
-
-
-
-
-    private class CustomDialog
-    {
-        private List<JComponent> components;
-
-        private String title;
-        private int messageType;
-        private JRootPane rootPane;
-        private String[] options;
-        private int optionIndex;
-
-        private CustomDialog()
-        {
-            components = new ArrayList<JComponent>();
-
-            setTitle("Custom dialog");
-            setMessageType(JOptionPane.PLAIN_MESSAGE);
-            setRootPane(null);
-            setOptions(new String[] { "OK", "Cancel" });
-            setOptionSelection(0);
-
-        }
-
-        public void setTitle(String title)
-        {
-            this.title = title;
-        }
-
-        public void setMessageType(int messageType)
-        {
-            this.messageType = messageType;
-        }
-
-        public void addComponent(JComponent component)
-        {
-            components.add(component);
-        }
-
-        public void addMessageText(String messageText)
-        {
-            JLabel label = new JLabel("<html>" + messageText + "</html>");
-
-            components.add(label);
-        }
-
-        public void setRootPane(JRootPane rootPane)
-        {
-            this.rootPane = rootPane;
-        }
-
-        public void setOptions(String[] options)
-        {
-            this.options = options;
-        }
-
-        public void setOptionSelection(int optionIndex)
-        {
-            this.optionIndex = optionIndex;
-        }
-
-        public int show()
-        {
-            int optionType = JOptionPane.OK_CANCEL_OPTION;
-            Object optionSelection = null;
-
-            if(options.length != 0)
-            {
-                optionSelection = options[optionIndex];
-            }
-
-            int selection = JOptionPane.showOptionDialog(rootPane,
-                    components.toArray(), title, optionType, messageType, null,
-                    options, optionSelection);
-
-            return selection;
-        }
-
-        public static String getLineBreak()
-        {
-            return "<br>";
-        }
-    }
-
-
 
 
 

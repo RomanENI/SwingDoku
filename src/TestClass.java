@@ -9,6 +9,7 @@ public class TestClass {
 
         CustomDialog dial = new CustomDialog();
         int carotte = dial.show();
+
         System.out.println(carotte);
     }
 

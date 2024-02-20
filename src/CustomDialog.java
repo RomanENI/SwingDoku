@@ -19,7 +19,7 @@ public class CustomDialog
         setTitle("Custom dialog");
         setMessageType(JOptionPane.PLAIN_MESSAGE);
         setRootPane(null);
-        setOptions(new String[] { "OK", "Cancel" });
+        setOptions(new String[] { "Refaire cette grille", "Créer une nouvelle grille" });
         setOptionSelection(0);
 
 
@@ -50,6 +50,7 @@ public class CustomDialog
     public void setRootPane(JRootPane rootPane)
     {
         this.rootPane = rootPane;
+
     }
 
     public void setOptions(String[] options)
