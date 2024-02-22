@@ -8,10 +8,12 @@ public class ModalRestartOrReplayDialog {
 //    }
 
     private ActionListener restartListener;
+    private ActionListener newGameListener;
 
 
-    ModalRestartOrReplayDialog(ActionListener listener){
-        this.restartListener = listener;
+    ModalRestartOrReplayDialog(ActionListener restartListener, ActionListener newGameListener){
+        this.restartListener = restartListener;
+        this.newGameListener = newGameListener;
     }
     public void createAndShowGUI(SwingDokuWindow swingDoku) {
 //        JFrame frame = new JFrame("Main Frame");
@@ -44,6 +46,7 @@ public class ModalRestartOrReplayDialog {
         replayBtn.addActionListener(restartListener);
         btnPan.add(replayBtn);
         JButton nextGridBtn = new JButton("Créer une nouvelle grille");
+        nextGridBtn.addActionListener(newGameListener);
         btnPan.add(nextGridBtn);
 
         modalDialog.add(btnPan, BorderLayout.PAGE_END);
@@ -66,6 +69,13 @@ public class ModalRestartOrReplayDialog {
             }
         });
         replayBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                modalDialog.dispose();
+            }
+        });
+
+        nextGridBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 modalDialog.dispose();

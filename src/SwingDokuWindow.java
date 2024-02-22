@@ -246,7 +246,7 @@ public class SwingDokuWindow extends JFrame {
 
 
             JButton buttonReset = new JButton("Reset");
-            buttonReset.addActionListener(this::resetBoard);
+            buttonReset.addActionListener(this::resetBoardAction);
             panelBottom.add(buttonReset);
             JButton buttonFullClear = new JButton("Clear");
             buttonFullClear.addActionListener(this::clearBoard);
@@ -283,7 +283,11 @@ public class SwingDokuWindow extends JFrame {
             logic.displayAbstractBoard(abstractBuildBoard);
         }
 
-        public void resetBoard(ActionEvent e){
+        public void resetBoardAction(ActionEvent e){
+            resetBoard();
+        }
+
+        public void resetBoard(){
             initAbstractBoard(abstractBoard,11);
             updateConcreteBoard();
             this.getPanelWithGrid().revalidate();
@@ -293,6 +297,8 @@ public class SwingDokuWindow extends JFrame {
             sdMenuBar.disableUndo();
             sdMenuBar.disableRedo();
         }
+
+
 
         public void updateConcreteBoard(){
             SDLogicCenter logic = new SDLogicCenter();
@@ -316,7 +322,6 @@ public class SwingDokuWindow extends JFrame {
             this.panelWithGrid.revalidate();
             this.panelWithGrid.repaint();
             this.getPanelWithGrid().playActionHandler.setActionDepthMeter(0);
-
             this.getPanelWithGrid().playActionHandler.clearActions();
         }
 
@@ -340,7 +345,7 @@ public class SwingDokuWindow extends JFrame {
 
             panelBottom.setLayout(new FlowLayout(FlowLayout.CENTER));
             initAbstractBoard(abstractBoard, 0);
-            buildOptionPanGridMakingMod();
+            goBuildOptionPanGridMakingMod();
         }
 
         private void saveLockedPanels() {
@@ -352,7 +357,7 @@ public class SwingDokuWindow extends JFrame {
 
         }
 
-        private void buildOptionPanGridMakingMod() {
+        private void goBuildOptionPanGridMakingMod() {
             SDLogicCenter logic = new SDLogicCenter();
 
 
@@ -1103,7 +1108,25 @@ public class SwingDokuWindow extends JFrame {
                             getMainPanel().getRightPanel().goModePlay();
                         }
                     };
-                    ModalRestartOrReplayDialog modal = new ModalRestartOrReplayDialog(restartFunction);
+
+                    ActionListener newGameFunction = new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            //go back to grid display
+                            JPanel pan = mainPanel.createPanelWithGrid();
+                            mainPanel.replacePanelGrid(pan);
+                            loadTheme(currentTheme);
+
+                            switchAbstractBoards();
+                            mainPanel.clearBoard();
+                            mainPanel.resetActions();
+
+                            mainPanel.submitButton.setEnabled(false);
+                            mainPanel.goBuildOptionPanGridMakingMod();
+                            getMainPanel().getRightPanel().goModeBuild();
+                        }
+                    };
+                    ModalRestartOrReplayDialog modal = new ModalRestartOrReplayDialog(restartFunction, newGameFunction);
                     modal.createAndShowGUI(zis);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
@@ -1325,7 +1348,7 @@ public class SwingDokuWindow extends JFrame {
         this.getMainPanel().getPanelBottom().setPreferredSize(new Dimension(this.getMainPanel().getBottomPanel().getWidth(), this.getMainPanel().getBottomPanel().getHeight()));
 
         if (this.getMainPanel().getPanelWithGrid().isCheckCoherence()){
-            this.getMainPanel().buildOptionPanGridMakingMod();
+            this.getMainPanel().goBuildOptionPanGridMakingMod();
         }else{
             this.getMainPanel().loadButtonsPlayMode();
         }

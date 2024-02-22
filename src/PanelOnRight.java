@@ -227,6 +227,16 @@ public class PanelOnRight extends JPanel {
         this.getPanelInScroller().repaint();
     }
 
+    public void goModeBuild(){
+        for (JPanel pan : this.listPanels){
+            this.getPanelInScroller().remove(pan);
+        }
+        this.listPanels.clear();
+        this.listPanels = this.listPanelsBuilding;
+        this.getPanelInScroller().revalidate();
+        this.getPanelInScroller().repaint();
+    }
+
 
     public void switchModes(){
 
