@@ -366,6 +366,7 @@ public class SwingDokuWindow extends JFrame {
             sdMenuBar.disableRedo();
 
             clearOptions();
+            getBottomPanel().setLayout(new FlowLayout());
             //buttons management
             JButton validationButton = new JButton("Jouer cette grille");
             validationButton.addActionListener(this::goPlay);
@@ -384,8 +385,8 @@ public class SwingDokuWindow extends JFrame {
             JButton randomNumberPlacer = new JButton("placer un nombre au hasard");
             randomNumberPlacer.addActionListener(this::placeOneRandomNumber);
             panelBottom.add(randomNumberPlacer);
-            JButton gridSuggest = new JButton("Grille automatique");
-            gridSuggest.addActionListener(this::AutoGridMaker);
+            JButton gridSuggest = new JButton("Assistance automatique");
+            gridSuggest.addActionListener(this::goAutoGridMakingModAction);
             panelBottom.add(gridSuggest);
             JButton randomRemove = new JButton("Vider une case au hasard");
             randomRemove.addActionListener(this::removeRandomNumber);
@@ -436,6 +437,13 @@ public class SwingDokuWindow extends JFrame {
             panelBottom.add(buttonReduceMore);
 
 
+            JButton buttonLoadAGameFromFile = new JButton("Grille 17");
+            buttonLoadAGameFromFile.addActionListener(this::load17GridAction);
+            panelBottom.add(buttonLoadAGameFromFile);
+
+            JButton buttonLoadAGame18 = new JButton("Grille 18");
+            buttonLoadAGame18.addActionListener(this::load18GridAction);
+            panelBottom.add(buttonLoadAGame18);
 
             panelBottom.revalidate();
             panelBottom.repaint();
@@ -444,8 +452,226 @@ public class SwingDokuWindow extends JFrame {
 
         }
 
+
+        private void goAutoGridMakingModAction(ActionEvent e){
+            goAutoGridMakingMod();
+        }
+
+
+        private void goAutoGridMakingMod(){
+            clearOptions();
+
+
+            getBottomPanel().setLayout(new BorderLayout());
+            JPanel upperPan = new JPanel();
+            upperPan.setOpaque(false);
+            JPanel centerPan = new JPanel();
+            centerPan.setOpaque(false);
+            upperPan.setLayout(new BoxLayout(upperPan, BoxLayout.Y_AXIS));
+            centerPan.setLayout(new BoxLayout(centerPan, BoxLayout.Y_AXIS));
+
+            panelBottom.add(upperPan, BorderLayout.LINE_START);
+            panelBottom.add(centerPan, BorderLayout.CENTER);
+
+
+            JButton goBackButton = new JButton("Retour");
+            goBackButton.addActionListener(this::returnToNormalGridMaking);
+            goBackButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+            upperPan.add(goBackButton);
+
+            JButton buttonVeryEasyGrid = new JButton("Très facile");
+            buttonVeryEasyGrid.addActionListener(this::createGridVeryEasyAction);
+            buttonVeryEasyGrid.setAlignmentX(Component.CENTER_ALIGNMENT);
+            centerPan.add(buttonVeryEasyGrid);
+
+            JButton buttonEasyGrid = new JButton("Facile");
+            buttonEasyGrid.addActionListener(this::createGridEasyAction);
+            buttonEasyGrid.setAlignmentX(Component.CENTER_ALIGNMENT);
+            centerPan.add(buttonEasyGrid);
+
+            JButton buttonNormalGrid = new JButton("Normal");
+            buttonNormalGrid.addActionListener(this::createGridNormalAction);
+            buttonNormalGrid.setAlignmentX(Component.CENTER_ALIGNMENT);
+            centerPan.add(buttonNormalGrid);
+
+            JButton buttonHardGrid = new JButton("Dur");
+            buttonHardGrid.addActionListener(this::giveHardGrid);
+            buttonHardGrid.setAlignmentX(Component.CENTER_ALIGNMENT);
+            centerPan.add(buttonHardGrid);
+
+            JButton buttonVeryHardGrid = new JButton("Très dur");
+            buttonVeryHardGrid.addActionListener(this::giveVeryHardGrid);
+            buttonVeryHardGrid.setAlignmentX(Component.CENTER_ALIGNMENT);
+            centerPan.add(buttonVeryHardGrid);
+
+            JButton buttonDiabolicGrid = new JButton("Diabolic");
+            buttonDiabolicGrid.addActionListener(this::giveDiabolicalGrid);
+            buttonDiabolicGrid.setAlignmentX(Component.CENTER_ALIGNMENT);
+            centerPan.add(buttonDiabolicGrid);
+
+            JButton buttonXtremeGrid = new JButton("Non.");
+            buttonXtremeGrid.addActionListener(this::giveXtremeGrid);
+            buttonXtremeGrid.setAlignmentX(Component.CENTER_ALIGNMENT);
+            centerPan.add(buttonXtremeGrid);
+
+        }
+
+        private void returnToNormalGridMaking(ActionEvent actionEvent) {
+            getPanelBottom().removeAll();
+
+            goBuildOptionPanGridMakingMod();
+        }
+
+
+        private void load17GridAction(ActionEvent actionEvent) {
+            //TODO
+            load17Grid();
+        }
+
+        private void load17Grid() {
+            String[] anArray = FileManager.giveArrayFromFile();
+
+            Random rand = new Random();
+            String chosenString = anArray[rand.nextInt(anArray.length)];
+            //sout
+            System.out.println(chosenString);
+            int[][] grid = makeGridFromExtractedString(chosenString);
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    abstractBoard[j][i] = grid[j][i];
+                }
+            }
+            updateConcreteBoard();
+
+
+
+
+        }
+
+
+
+        private void load18GridAction(ActionEvent actionEvent) {
+            load18Grid();
+        }
+
+
+        private void giveHardGrid(ActionEvent actionEvent){
+            makeGridFromFile(23);
+        }
+        private void giveVeryHardGrid(ActionEvent actionEvent){
+            makeGridFromFile(20);
+        }
+        private void giveDiabolicalGrid(ActionEvent actionEvent){
+            makeGridFromFile(18);
+        }
+        private void giveXtremeGrid(ActionEvent actionEvent){
+            makeGridFromFile(17);
+        }
+
+        private void makeGridFromFile(int totalClues){
+            int toAdd = totalClues - 17;
+            loadGridAdjusted(toAdd);
+
+        }
+
+
+        private void loadGridAdjusted(int toAdd){
+            String[] anArray = FileManager.giveArrayFromFile();
+
+            Random rand = new Random();
+            String chosenString = anArray[rand.nextInt(anArray.length)];
+            //sout
+            System.out.println(chosenString);
+            int[][] grid = makeGridFromExtractedString(chosenString);
+
+            SDLogicCenter logic = new SDLogicCenter();
+            int[][] auxiliary = logic.copyOfAbstractBoard(grid);
+            logic.humanSolver(auxiliary);
+            logic.possibleGrid(auxiliary);
+
+            makeGridFromA17(rand, grid, auxiliary, toAdd);
+            logic.shuffleGrid(grid);
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    abstractBoard[j][i] = grid[j][i];
+                }
+            }
+            updateConcreteBoard();
+        }
+
+
+        private void load18Grid() {
+            String[] anArray = FileManager.giveArrayFromFile();
+
+            Random rand = new Random();
+            String chosenString = anArray[rand.nextInt(anArray.length)];
+            //sout
+            System.out.println(chosenString);
+            int[][] grid = makeGridFromExtractedString(chosenString);
+
+            SDLogicCenter logic = new SDLogicCenter();
+            int[][] auxiliary = logic.copyOfAbstractBoard(grid);
+            logic.humanSolver(auxiliary);
+            logic.possibleGrid(auxiliary);
+
+            makeGridFromA17(rand, grid, auxiliary, 6);
+
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    abstractBoard[j][i] = grid[j][i];
+                }
+            }
+            updateConcreteBoard();
+        }
+
+
+
+        private void makeGridFromA17(Random rand, int[][] grid, int[][] auxiliary, int numberToAdd) {
+            int u = rand.nextInt(9);
+            int v = rand.nextInt(9);
+
+            for (int i = 0; i < numberToAdd; i++) {
+
+                while(grid[u][v] != 0){
+                    u = rand.nextInt(9);
+                    v = rand.nextInt(9);
+                }
+                grid[u][v] = auxiliary[u][v];
+            }
+
+        }
+
+        private int[][] makeGridFromExtractedString(String str){
+            //TODO
+            int[][] newGrid = new int[9][9];
+            int[] asArrayNumber = new int[81];
+            for (int i = 0; i < str.length(); i++) {
+
+                if(str.charAt(i) == '.'){
+                    asArrayNumber[i] = 0;
+                }else {
+                    asArrayNumber[i] = Integer.parseInt(String.valueOf(str.charAt(i)));
+                }
+            }
+
+
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    newGrid[i][j] = asArrayNumber[i*9 + j];
+                }
+            }
+
+            SDLogicCenter logic = new SDLogicCenter();
+            logic.displayAbstractBoard(newGrid);
+
+            return newGrid;
+
+        }
+
+
         private void computerSolver(ActionEvent event) {
             solveGridAsComputer(abstractBoard);
+
 
         }
 
@@ -480,6 +706,27 @@ public class SwingDokuWindow extends JFrame {
             updateConcreteBoard();
         }
 
+
+        private void reduceGridd(int[][] grid, int downTo) {
+            SDLogicCenter logic = new SDLogicCenter();
+            int[] coordsForMethod = logic.randomList1to81();
+            int number = downTo;
+            int clueNumber = number;
+            boolean bool = false;
+            do {
+
+                bool = logic.reduceGridtoXClues(grid, coordsForMethod, clueNumber);
+                clueNumber++;
+            }while (!bool);
+
+            if (clueNumber != number+1){
+                reduceGridd();
+            }
+
+
+            System.out.println("in the end we had "+(logic.nbNotEmptySquare(grid))+" clues placed");
+            updateConcreteBoard();
+        }
 
 
         public void reduceGridMore(ActionEvent event){
@@ -545,7 +792,45 @@ public class SwingDokuWindow extends JFrame {
             updateConcreteBoard();
         }
 
+        private void createGridVeryEasyAction(ActionEvent e){
+            createGridMoreThan24Clues(36);
+        }
+        private void createGridMoreThan24Clues(int finalClueNumber){
+            SDLogicCenter logic = new SDLogicCenter();
+            int[][] madeGrid = new int[9][9];
+            logic.generateGridEasy(madeGrid);
+            reduceSome(madeGrid, finalClueNumber);
+            logic.shuffleGrid(madeGrid);
+            abstractBoard = madeGrid;
+            System.out.println("in the end we had "+(logic.nbNotEmptySquare(abstractBoard))+" clues placed");
+            updateConcreteBoard();
+        }
 
+        private void reduceSome(int[][] gridToReduce, int finalClueNumber){
+            SDLogicCenter logic = new SDLogicCenter();
+            int[] coordsForMethod = logic.randomList1to81();
+            int number = finalClueNumber;
+            int clueNumber = number;
+            boolean bool = false;
+            do {
+
+                bool = logic.reduceGridtoXClues(gridToReduce, coordsForMethod, clueNumber);
+                clueNumber++;
+            }while (!bool);
+
+            if (clueNumber != number+1){
+                reduceSome(gridToReduce, finalClueNumber);
+            }
+        }
+
+
+        private void createGridEasyAction(ActionEvent e){
+            createGridMoreThan24Clues(31);
+        }
+
+        private void createGridNormalAction(ActionEvent e){
+            createGridMoreThan24Clues(26);
+        }
 
 
         private boolean checkGridPurity(){
@@ -607,7 +892,6 @@ public class SwingDokuWindow extends JFrame {
                 panelRight.goModePlay();
                 resetActions();
 
-
                 for (int i = 0; i < 9; i++) {
                     for (int j = 0; j < 9; j++) {
                         abstractBoard[j][i] = abstractBuildBoard[j][i];
@@ -622,9 +906,6 @@ public class SwingDokuWindow extends JFrame {
                 //TODO
                 //we store solution(s) somewhere
                 currentGame = new Game(abstractBoard);
-
-
-                //we add a final listener on every panenNumbers so that when last panel is filled we can launch the submit grid procedure.
 
             }
 
