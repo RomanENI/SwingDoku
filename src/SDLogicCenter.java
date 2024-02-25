@@ -417,6 +417,34 @@ public class SDLogicCenter {
     }
 
 
+    public int[][] giveGridMoreThan24Clues(int finalClueNumber){
+
+        int[][] madeGrid = new int[9][9];
+        generateGridEasy(madeGrid);
+        reduceSome(madeGrid, finalClueNumber);
+        shuffleGrid(madeGrid);
+        return madeGrid;
+
+    }
+
+    private void reduceSome(int[][] gridToReduce, int finalClueNumber){
+
+        int[] coordsForMethod = randomList1to81();
+        int number = finalClueNumber;
+        int clueNumber = number;
+        boolean bool = false;
+        do {
+
+            bool = reduceGridtoXClues(gridToReduce, coordsForMethod, clueNumber);
+            clueNumber++;
+        }while (!bool);
+
+        if (clueNumber != number+1){
+            reduceSome(gridToReduce, finalClueNumber);
+        }
+    }
+
+
     public int nbNotEmptySquare(int[][] abstractGrid){
         int count = 0;
         for (int i = 0; i < 9; i++) {
@@ -469,7 +497,7 @@ public class SDLogicCenter {
                     if (counter[0] > 140000){
                         return false;
                     }
-                    System.out.println(counter[0]);
+//                    System.out.println(counter[0]);
                     int[] randomlist = randomSequence0to8();
                     for (int k = 0; k < 9; k++) {
                         randomlist[k] += 1;
@@ -1083,6 +1111,9 @@ public class SDLogicCenter {
     }
 
 
+    //TODO
+
+
 
 
 
@@ -1134,57 +1165,50 @@ public class SDLogicCenter {
     }
 
     public void shuffleGrid(int[][] grid){
-        shuflleGridTriColumn(grid);
+        for (int i = 0; i < 3; i++) {
+            shuffleTriColumn(i, grid);
+            shuffleTriLine(i, grid);
+        }
         shuffleGridTriLine(grid);
-
+        shuflleGridTriColumn(grid);
+        gridPermutation(grid);
     }
 
-    private void shuffleGridTriLine(int[][] grid) {
+    //shuffle stacks of 3 lines
+    public void shuffleGridTriLine(int[][] grid) {
         Random rand = new Random();
-        for (int i = 0; i < 30; i++) {
-            int p = rand.nextInt(2)+1;
-            int q = p;
-//            System.out.println("p : "+p);
-            do {
-                q = rand.nextInt(p+1)+1;
-//                System.out.println("ha");
-            }while (p == q);
-
-//            System.out.println("q : "+q);
-            swapTriLine(p, q, grid);
-            swapTriColumn(p, q, grid);
+        int indexFirstTriLine;
+        int indexSecondTriline;
+        for (int i = 0; i < 3; i++) {
+            indexFirstTriLine = i;
+            indexSecondTriline = rand.nextInt(3-i)+i;
+            swapTriLine(indexFirstTriLine, indexSecondTriline, grid);
         }
 
-
     }
 
-    private void shuflleGridTriColumn(int[][] grid) {
+    //shuffles stacks of 3 columns
+    public void shuflleGridTriColumn(int[][] grid) {
         Random rand = new Random();
-        for (int i = 0; i < 30; i++) {
-            int p = rand.nextInt(2)+1;
-            int q = p;
-//            System.out.println("p : "+p);
-            do {
-                q = rand.nextInt(p+1)+1;
-//                System.out.println("ha");
-            }while (p == q);
-
-//            System.out.println("q : "+q);
+        int indexFirstTriColumn;
+        int indexSecondTriColumn;
+        for (int i = 0; i < 3; i++) {
+            indexFirstTriColumn = i;
+            indexSecondTriColumn = rand.nextInt(3-i)+i;
+            swapTriColumn(indexFirstTriColumn, indexSecondTriColumn, grid);
 
         }
 
-
-
-
     }
 
-    private void swapTriColumn(int p, int q, int[][] grid) {
+    //exchange stack of 3 columns p with stack of 3 columns q
+    public void swapTriColumn(int p, int q, int[][] grid) {
         int min = min(p, q);
         int max = max(p, q);
 
         int[] inter = new int[3];
-        min = (min*3)-3;
-        max = (max*3)-3;
+        min = (min*3);
+        max = (max*3);
 
         for (int j = 0; j < 9; j++) {
             for (int i = 0; i < 3; i++) {
@@ -1193,21 +1217,17 @@ public class SDLogicCenter {
                 grid[j][max + i] = inter[i];
             }
         }
-
-        shuffleTriColumn(1, grid);
-
-
     }
 
-    private void swapTriLine(int p, int q, int[][] grid) {
+    //exchange stack of 3 lines  p with stack of 3 lines q
+    public void swapTriLine(int p, int q, int[][] grid) {
         int min = min(p, q);
         int max = max(p, q);
 
         int[] inter = new int[3];
-        min = (min*3)-3;
-        max = (max*3)-3;
+        min = (min*3);
+        max = (max*3);
 
-//        displayAbstractBoard(grid);
         for (int j = 0; j < 9; j++) {
             for (int i = 0; i < 3; i++) {
                 inter[i] = grid[min + i][j];
@@ -1215,34 +1235,45 @@ public class SDLogicCenter {
                 grid[max + i][j] = inter[i];
             }
         }
-//        displayAbstractBoard(grid);
     }
 
-    private void shuffleTriColumn(int p, int[][] grid){
-        int start = (p*3)-3;
-
-        //selecting the two column that will be switched
+    //shuffles the columns in the stack of 3 columns p.
+    public void shuffleTriColumn(int p, int[][] grid){
+        int start = (p*3);
         Random rand = new Random();
-        int colOne = rand.nextInt(3);
-        int colTwo = rand.nextInt(3);
-
-//        System.out.println("Tree "+p+" shuffle col "+colOne+" and "+colTwo);
-//        displayAbstractBoard(grid);
-        if (colOne != colTwo){
-
-            for (int j = 0; j < 9; j++) {
-                int inter = grid[j][start+colOne];
-                grid[j][start+colOne] = grid[j][start+colTwo];
-                grid[j][start+colTwo] = inter;
-
+        int colOne;
+        int colTwo;
+        for (int i = 0; i < 3; i++) {
+            colOne = i;
+            colTwo = rand.nextInt(3-i)+i;
+            if (colOne != colTwo){
+                for (int j = 0; j < 9; j++) {
+                    int inter = grid[j][start+colOne];
+                    grid[j][start+colOne] = grid[j][start+colTwo];
+                    grid[j][start+colTwo] = inter;
+                }
             }
         }
-//        displayAbstractBoard(grid);
-
-
-
     }
 
+    //shuffles the lines in the stack of 3 lines p.
+    public void shuffleTriLine(int p, int[][] grid){
+        int start = (p*3);
+        Random rand = new Random();
+        int lineOne;
+        int lineTwo;
+        for (int i = 0; i < 3; i++) {
+            lineOne = i;
+            lineTwo = rand.nextInt(3-i)+i;
+            if (lineOne != lineTwo){
+                for (int j = 0; j < 9; j++) {
+                    int inter = grid[start+lineOne][j];
+                    grid[start+lineOne][j] = grid[start+lineTwo][j];
+                    grid[start+lineTwo][j] = inter;
+                }
+            }
+        }
+    }
 
     private int min(int a, int b){
         int min = a;
@@ -1263,6 +1294,34 @@ public class SDLogicCenter {
         }
         return max;
     }
+
+    public void gridPermutation(int[][] grid){
+        Random rand = new Random();
+        int[] firstArray = new int[9];
+        for (int i = 0; i < 9; i++) {
+            firstArray[i] = i+1;
+        }
+        int[] secondArray = randomSequence0to8();
+        for (int i = 0; i < secondArray.length; i++) {
+            secondArray[i] += 1;
+        }
+
+        HashMap<Integer, Integer> permutationMapper = new HashMap<Integer, Integer>();
+        for (int i = 0; i < 9; i++) {
+            permutationMapper.put(firstArray[i], secondArray[i]);
+        }
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if(grid[j][i] != 0){
+                    grid[j][i] = permutationMapper.get(grid[j][i]);
+                }
+            }
+        }
+
+
+
+    }
+
 
 
 }

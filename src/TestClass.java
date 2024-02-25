@@ -5,15 +5,22 @@ import java.util.List;
 public class TestClass {
 
 
-    public static void main(String args[]){
+    public static void main(String args[]) {
+        SDLogicCenter logic = new SDLogicCenter();
+        TileSolveInfoHolder testTile = new TileSolveInfoHolder(0, 0);
+        int[][] aGrid = new int[9][9];
+        aGrid = logic.giveGridMoreThan24Clues(26);
 
-        CustomDialog dial = new CustomDialog();
-        int carotte = dial.show();
+        logic.displayAbstractBoard(aGrid);
 
-        System.out.println(carotte);
+        GridSolver solver = new GridSolver(aGrid);
+        solver.showStateOfCandidates();
+        solver.simpleUnicityUpdate();
+        solver.showStateOfCandidates();
+        solver.selectInfoHolderWithonly1Candidate();
+
+
     }
-
-
 
 }
 

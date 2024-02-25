@@ -504,7 +504,7 @@ public class SwingDokuWindow extends JFrame {
             buttonVeryHardGrid.setAlignmentX(Component.CENTER_ALIGNMENT);
             centerPan.add(buttonVeryHardGrid);
 
-            JButton buttonDiabolicGrid = new JButton("Diabolic");
+            JButton buttonDiabolicGrid = new JButton("Diabolique");
             buttonDiabolicGrid.addActionListener(this::giveDiabolicalGrid);
             buttonDiabolicGrid.setAlignmentX(Component.CENTER_ALIGNMENT);
             centerPan.add(buttonDiabolicGrid);
@@ -524,7 +524,6 @@ public class SwingDokuWindow extends JFrame {
 
 
         private void load17GridAction(ActionEvent actionEvent) {
-            //TODO
             load17Grid();
         }
 
@@ -642,7 +641,6 @@ public class SwingDokuWindow extends JFrame {
         }
 
         private int[][] makeGridFromExtractedString(String str){
-            //TODO
             int[][] newGrid = new int[9][9];
             int[] asArrayNumber = new int[81];
             for (int i = 0; i < str.length(); i++) {
@@ -780,7 +778,6 @@ public class SwingDokuWindow extends JFrame {
 
         private void giveEasyGrid(){
 
-            //TODO HERE
             System.out.println("there");
             SDLogicCenter logic = new SDLogicCenter();
             int[][] madeGrid = new int[9][9];
@@ -872,7 +869,6 @@ public class SwingDokuWindow extends JFrame {
         }
 
         private void goPlay(ActionEvent event) {
-            //TODO
 
 
             this.getPanelWithGrid().getLockedPanels().clear();
@@ -903,7 +899,6 @@ public class SwingDokuWindow extends JFrame {
                 updateConcreteBoard();
                 this.getPanelWithGrid().lockNonEmptyPanels();
 
-                //TODO
                 //we store solution(s) somewhere
                 currentGame = new Game(abstractBoard);
 
@@ -1317,7 +1312,6 @@ public class SwingDokuWindow extends JFrame {
 //                sdMenuBar.setAllMenusTo(false);
 //                mainPanel.setAllButtonsTo(false);
 //
-//                //TODO WE MUST ALSO DISABLE BUTTONS ON RIGHT PANE
 //
 //
 //                final JOptionPane optionPane = new JOptionPane(

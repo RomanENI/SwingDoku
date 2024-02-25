@@ -68,19 +68,14 @@ public class ModalRestartOrReplayDialog {
                 JOptionPane.showMessageDialog(null, "Vous devez obligatoirement choisir une option : )");
             }
         });
-        replayBtn.addActionListener(new ActionListener() {
+        ActionListener modalDisposer = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 modalDialog.dispose();
             }
-        });
-
-        nextGridBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                modalDialog.dispose();
-            }
-        });
+        };
+        replayBtn.addActionListener(modalDisposer);
+        nextGridBtn.addActionListener(modalDisposer);
 
         modalDialog.setSize(338, 150);
         modalDialog.setLocationRelativeTo(parentFrame);
