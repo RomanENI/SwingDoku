@@ -13,7 +13,7 @@ public class PanelOnRight extends JPanel {
     ArrayList<PanelMessage> listPanels;
     ArrayList<PanelMessage> listPanelsPlaying;
     ArrayList<PanelMessage> listPanelsBuilding;
-    Dimension dimRightPanel = new Dimension(370, 0);
+
     JButton buttonRemoveFirst = new JButton();
 
     private Color msgBackgroundColor;
@@ -68,6 +68,7 @@ public class PanelOnRight extends JPanel {
 
     PanelOnRight(){
 
+        Dimension dimRightPanel = new Dimension(370, 0);
         this.setPreferredSize(dimRightPanel);
         this.panelInScroller = new JPanel(){
             @Override
@@ -90,10 +91,12 @@ public class PanelOnRight extends JPanel {
 
 
 
+
         initScrollPane();
         setUpButtonRemoveFirst();
 
         setupPanelsResizer();
+
     }
 
     private void setupPanelsResizer() {
@@ -775,7 +778,9 @@ public class PanelOnRight extends JPanel {
 
 
 
-
+    public static void main(String[] args){
+        PanelOnRight pan = new PanelOnRight();
+    }
 
 
 

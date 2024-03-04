@@ -7,6 +7,7 @@ import java.util.Random;
 public class SwingDokuWindow extends JFrame {
 
 
+    private static SwingDokuWindow SwingDokuInstance;
     SwingDokuWindow zis = this;
     public Game currentGame;
     //    JMenuBar sdMenuBar = new JMenuBar();
@@ -14,7 +15,7 @@ public class SwingDokuWindow extends JFrame {
     public int[][] abstractBoard;
     public MainPanel mainPanel;
 
-    private String currentTheme = "boring";
+    private String currentTheme = "Comte Dooku";
 
     public int[][] getAbstractPlayBoard() {
         return abstractPlayBoard;
@@ -33,7 +34,7 @@ public class SwingDokuWindow extends JFrame {
     }
 
 
-    public SwingDokuWindow(){
+    private SwingDokuWindow(){
 
         super("SwingDoku");
         this.abstractBoard = new int[9][9];
@@ -54,7 +55,7 @@ public class SwingDokuWindow extends JFrame {
         this.setLocationRelativeTo(null);
         this.loadTheme(currentTheme);
         this.pack();
-        this.setVisible(true);
+//        this.setVisible(true);
     } // fin du constructeur SwingDokuWindow
 
 
@@ -63,18 +64,72 @@ public class SwingDokuWindow extends JFrame {
         this.sdMenuBar.getMenuItemBoring().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                loadTheme("boring");
+
                 currentTheme = "boring";
+                loadTheme(currentTheme);
             }
         });
         this.sdMenuBar.getMenuItemAncientRome().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                loadTheme("rome antique");
                 currentTheme = "rome antique";
+                loadTheme(currentTheme);
             }
         });
 
+
+        this.sdMenuBar.getMenuItemUnicorn1().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentTheme = "Licorne 1";
+                loadTheme(currentTheme);
+            }
+        });
+
+         this.sdMenuBar.getMenuItemUnicorn2().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentTheme = "Licorne 2";
+                loadTheme(currentTheme);
+            }
+        });
+        this.sdMenuBar.getMenuItemDooku().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentTheme = "Comte Dooku";
+                loadTheme(currentTheme);
+            }
+        });
+
+        this.sdMenuBar.getMenuItemUnicorn3().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentTheme = "Licorne 3";
+                loadTheme(currentTheme);
+            }
+        });
+
+        this.sdMenuBar.getMenuItemPokemonStarter().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentTheme = "Pokemon Starter";
+                loadTheme(currentTheme);
+            }
+        });
+        this.sdMenuBar.getMenuItemLeaves().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentTheme = "Feuilles";
+                loadTheme(currentTheme);
+            }
+        });
+        this.sdMenuBar.getMenuItemFruitsAndVegetables().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentTheme = "Fruits et Legumes";
+                loadTheme(currentTheme);
+            }
+        });
 
     }
 
@@ -91,7 +146,7 @@ public class SwingDokuWindow extends JFrame {
     }
 
 
-    private class MainPanel extends JPanel{
+    public class MainPanel extends JPanel{
 
 
         JPanel panelLeft = new JPanel();
@@ -143,10 +198,16 @@ public class SwingDokuWindow extends JFrame {
 
         private JButton submitButton;
 
+        public JButton getPlayConstructedGridButton() {
+            return playConstructedGridButton;
+        }
+
+        private JButton playConstructedGridButton;
 
 
         MainPanel(){
             setupSubmitButton();
+            setupPlayConstructedGridButton();
             panelRight = new PanelOnRight();
             createPanelWithGrid();
             panelLeft.setBackground(Color.WHITE);
@@ -167,8 +228,58 @@ public class SwingDokuWindow extends JFrame {
 
         }
 
+        private void lockGridAndPlay(){
+            getPanelWithGrid().getLockedPanels().clear();
+            SDLogicCenter logic = new SDLogicCenter();
+            getPanelWithGrid().lockNonEmptyPanels();
+        }
+
+        private void setupPlayConstructedGridButton() {
+            this.playConstructedGridButton = new JButton();
+
+            playConstructedGridButton.setText("Jouer cette grille");
+            playConstructedGridButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    getPanelWithGrid().getLockedPanels().clear();
+                    SDLogicCenter logic = new SDLogicCenter();
+
+                    if (checkGridPurity()){
+
+                        //we go to playMode
+
+                        clearOptions();
+                        loadButtonsPlayMode();
+
+                        //we lock panels that are not at 0
+
+                        switchAbstractBoards();
+                        setGridCoherenceStatus(false);
+                        panelRight.goModePlay();
+                        resetActions();
+
+                        for (int i = 0; i < 9; i++) {
+                            for (int j = 0; j < 9; j++) {
+                                abstractBoard[j][i] = abstractBuildBoard[j][i];
+                            }
+                        }
+                        for (PanelNumber pan : getPanelWithGrid().getPanels()){
+                            pan.setLocked(false);
+                        }
+                        updateConcreteBoard();
+                        getPanelWithGrid().lockNonEmptyPanels();
+
+                        //we store solution(s) somewhere
+                        currentGame = new Game(abstractBoard);
+
+                    }
+                }
+            });
+
+        }
+
         public JPanel createPanelWithGrid() {
-            panelWithGrid = new PanelGrid(getSdMenuBar(), getAbstractBoard(), getRightPanel(), this.submitButton);
+            panelWithGrid = new PanelGrid(getSdMenuBar(), getAbstractBoard(), getRightPanel(), this.submitButton, this.playConstructedGridButton);
             return panelWithGrid;
         }
 
@@ -192,7 +303,31 @@ public class SwingDokuWindow extends JFrame {
                         System.out.println("we won, apparently from the submit button");
                         initiateWinSequence();
                     }else {
-                        System.out.println("hello this is submit button and submitted grid is incorrect");
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Thread.sleep(1500);
+                                    JOptionPane.showMessageDialog(getMainPanel(),
+                                            "<html>Ahhhh la la la la la la <br>" +
+                                                    "Terriiiiiiiiiiiiiiiiiiiible....<br>" +
+                                                    "C'est pas bon :-(</html>");
+
+                                } catch (InterruptedException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+
+                                System.out.println("waited three second");
+
+
+                                // https://stackoverflow.com/questions/942056/remove-x-button-in-swing-jdialog
+
+
+                            }
+
+                        }).start();
+
                     }
                 }
             });
@@ -201,6 +336,31 @@ public class SwingDokuWindow extends JFrame {
         }
 
         public void buildLayout(JPanel leftPan, JPanel panelCenter, PanelOnRight panelRight){
+//            this.removeAll();
+//            GroupLayout newLayout = new GroupLayout(this);
+//            this.setLayout(newLayout);
+//            newLayout.setAutoCreateGaps(true);
+//            newLayout.setAutoCreateContainerGaps(false);
+//
+//            newLayout.setHorizontalGroup(
+//                    newLayout.createSequentialGroup()
+//                            .addComponent(leftPan, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//                            .addComponent(panelCenter, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+//                                    GroupLayout.PREFERRED_SIZE)
+//                            .addComponent(panelRight, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//            );
+//
+//            newLayout.setVerticalGroup(
+//                    newLayout.createSequentialGroup()
+//                            .addGroup(newLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+//                                    .addComponent(leftPan)
+//                                    .addComponent(panelCenter)
+//                                    .addComponent(panelRight, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+//            );
+//
+//            pack();
+
+
             this.removeAll();
             GroupLayout newLayout = new GroupLayout(this);
             this.setLayout(newLayout);
@@ -216,14 +376,17 @@ public class SwingDokuWindow extends JFrame {
             );
 
             newLayout.setVerticalGroup(
-                    newLayout.createSequentialGroup()
-                            .addGroup(newLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(leftPan)
-                                    .addComponent(panelCenter)
-                                    .addComponent(panelRight, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    newLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addGroup(newLayout.createSequentialGroup()
+                                    .addGroup(newLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(leftPan)
+                                            .addComponent(panelCenter)
+                                            .addComponent(panelRight, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGap(0, 1, Short.MAX_VALUE))
             );
 
             pack();
+            System.out.println("done");
         }
 
 
@@ -359,7 +522,7 @@ public class SwingDokuWindow extends JFrame {
 
         private void goBuildOptionPanGridMakingMod() {
             SDLogicCenter logic = new SDLogicCenter();
-
+            switchAbstractBoards();
 
             //disable undo menu
             sdMenuBar.disableUndo();
@@ -368,9 +531,10 @@ public class SwingDokuWindow extends JFrame {
             clearOptions();
             getBottomPanel().setLayout(new FlowLayout());
             //buttons management
-            JButton validationButton = new JButton("Jouer cette grille");
-            validationButton.addActionListener(this::goPlay);
-            panelBottom.add(validationButton);
+//            JButton validationButton = new JButton("Jouer cette grille");
+//            validationButton.addActionListener(this::goPlay);
+//            panelBottom.add(validationButton);
+            panelBottom.add(playConstructedGridButton);
             JButton cancelButton = new JButton("Annuler");
             cancelButton.addActionListener(this::cancelGridmaking);
             panelBottom.add(cancelButton);
@@ -840,9 +1004,9 @@ public class SwingDokuWindow extends JFrame {
             boolean check = false;
             logic.twoOrMorePossibleGrids(abstractBuildBoard, list);
             check = list.size() == 2;
-//            logic.displayAbstractBoard(abstractBuildBoard);
+            logic.displayAbstractBoard(abstractBuildBoard);
 
-
+            System.out.println(list.size());
             if (check) {
                 //Custom button text
                 System.out.println("waddup");
@@ -1281,7 +1445,7 @@ public class SwingDokuWindow extends JFrame {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Theme theme = new Theme("boring");
+                Theme theme = new Theme(currentTheme);
 
                 JPanel panelWin = new JPanel();
 
@@ -1307,60 +1471,11 @@ public class SwingDokuWindow extends JFrame {
             @Override
             public void run() {
 
-//                //here we have to disable all actionable buttons for the user in order to prevent monstruous bugs
-////
-//                sdMenuBar.setAllMenusTo(false);
-//                mainPanel.setAllButtonsTo(false);
-//
-//
-//
-//                final JOptionPane optionPane = new JOptionPane(
-//                        "Bravo, vous avez résolu la grille.",
-//                        JOptionPane.PLAIN_MESSAGE,
-//                        JOptionPane.YES_NO_CANCEL_OPTION);
-//
-//
-//
-//
-//
-//                Window window = SwingUtilities.windowForComponent( mainPanel );
-//
-//                final JDialog dialog = new JDialog((Frame) window,
-//                        "Click a button",
-//                        true);
-//                final int IDEAL_DIALOG_X_SIZE = 400;
-//                final int IDEAL_DIALOG_y_SIZE = 400;
-//                dialog.setPreferredSize(new Dimension(IDEAL_DIALOG_X_SIZE, IDEAL_DIALOG_y_SIZE));
-//                Point centerPoint = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
-//                centerPoint.x -= IDEAL_DIALOG_X_SIZE/2;
-//                centerPoint.y -= IDEAL_DIALOG_y_SIZE/2;
-//
-//                int a=optionPane.showConfirmDialog(dialog,"Are you sure?");
-//
-//
-//                dialog.setLocation(centerPoint);
-//                dialog.setContentPane(optionPane);
-//                dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-//                for (WindowListener wl : dialog.getWindowListeners()) {
-//                    dialog.removeWindowListener(wl);
-//                }
-//                dialog.addWindowListener(new WindowAdapter() {
-//                    @Override
-//                    public void windowClosing(WindowEvent e) {
-//                        JOptionPane.showMessageDialog(null, "Vous devez obligatoirement choisir une option : )");
-//                    }
-//                });
-//                dialog.pack();
-//                dialog.setVisible(true);
-
-
-
-
 
 
 
                 try {
-                    Thread.sleep(0001);
+                    Thread.sleep(3000);
                     ActionListener restartFunction = new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
@@ -1414,64 +1529,6 @@ public class SwingDokuWindow extends JFrame {
                 // https://stackoverflow.com/questions/942056/remove-x-button-in-swing-jdialog
 
 
-
-//                Object[] options = {"Rejouer cette grille",
-//                        "Faire une nouvelle partie", "option 3"
-//                };
-//                int n = 666;
-//                n = JOptionPane.showOptionDialog(mainPanel.getPanelWithGrid(),
-//                        "Bravo",
-//                        "Immense triomphe",
-//                        JOptionPane.YES_NO_CANCEL_OPTION,
-//                        JOptionPane.QUESTION_MESSAGE,
-//                        null,
-//                        options,
-//                        options[2]);
-//
-//
-//                optionChoice[0] = n;
-//                if (optionChoice[0] == 0){
-//                    mainPanel.resetActions();
-//                    //We need a method to remove panel messages
-//                    for (JPanel pan : mainPanel.getRightPanel().getListPanels()){
-//                        mainPanel.getRightPanel().getPanelInScroller().remove(pan);
-//
-//                    }
-//                    mainPanel.getRightPanel().getPanelInScroller().revalidate();
-//                    mainPanel.getRightPanel().getPanelInScroller().repaint();
-//                    mainPanel.getRightPanel().revalidate();
-//                    mainPanel.getRightPanel().repaint();
-//                    mainPanel.getPanelWithGrid().setAllPansToCertitude();
-//                    mainPanel.clearBoard();
-//                    mainPanel.getPanelWithGrid().unlockAllPanels();
-//                    SDLogicCenter logic = new SDLogicCenter();
-//                    //copie manuelle de abstractBoard
-//                    int[][] temporaryCopy = currentGame.getStartingPosition();
-//                    for (int j = 0; j < 9; j++) {
-//                        for (int i = 0; i < 9; i++) {
-//                            abstractBoard[j][i] = temporaryCopy[j][i];
-//                        }
-//                    }
-//
-//
-//
-//
-//
-//                    mainPanel.getPanelWithGrid().displayModeToPanelNumbers();
-//                    mainPanel.updateConcreteBoard();
-//                    mainPanel.getPanelWithGrid().lockNonEmptyPanels();
-//
-//                    System.out.println("option 1 was picked");
-//
-//
-//                }else if (optionChoice[0] == 1){
-//                    System.out.println("option 2 was picked");
-//                }else if (optionChoice[0] == 2){
-//                    System.out.println("option 3 was picked");
-//                }
-//
-//                sdMenuBar.setAllMenusTo(true);
-//                mainPanel.setAllButtonsTo(true);
             }
 
         }).start();
@@ -1519,8 +1576,8 @@ public class SwingDokuWindow extends JFrame {
 
 
     private void initMainPanel() {
-        initGridPanel() ;
         mainPanel = new MainPanel();
+        initGridPanel() ;
         mainPanel.setBackground(Color.red);
         mainPanel.getCenterPanel().setBackground(Color.red);
 
@@ -1534,8 +1591,10 @@ public class SwingDokuWindow extends JFrame {
             abstractPlayBoard = new int[9][9];
         }
         abstractBoard = abstractPlayBoard;
-        initAbstractBoard(abstractBoard, 11);
+//        initAbstractBoard(abstractBoard, 11);
+        getMainPanel().createGridMoreThan24Clues(26);
 
+        mainPanel.lockGridAndPlay();
     }
 
 
@@ -1659,10 +1718,17 @@ public class SwingDokuWindow extends JFrame {
     }
 
 
+    public static SwingDokuWindow giveInstance(){
+        if(SwingDokuInstance == null){
+            SwingDokuInstance = new SwingDokuWindow();
+        }
+        return SwingDokuInstance;
+    }
 
 
     public static void main(String args[]){
-        SwingDokuWindow windowTest = new SwingDokuWindow();
+        SwingDokuWindow sdw = giveInstance();
+        sdw.setVisible(true);
 
     }
 

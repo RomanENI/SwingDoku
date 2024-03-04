@@ -20,6 +20,14 @@ public class TestClass {
         solver.selectInfoHolderWithonly1Candidate();
 
 
+        int counter = 0;
+        for (int i = 0; i < 100; i++) {
+            System.out.println("counter : " + counter++);
+            logic.giveGridMoreThan24Clues(26);
+        }
+
+        System.out.println("fini");
+
     }
 
 }

@@ -14,12 +14,28 @@ public class SDMenuBar extends JMenuBar{
 
 
     private JMenuItem menuItemBoring;
-
-
     private JMenuItem menuItemAncientRome;
+    private JMenuItem menuItemUnicorn1;
+    private JMenuItem menuItemUnicorn2;
 
 
 
+    private JMenuItem menuItemUnicorn3;
+
+
+
+    private JMenuItem menuItemPokemonStarter;
+
+
+
+    private JMenuItem menuItemLeaves;
+
+
+
+    private JMenuItem menuItemFruitsAndVegetables;
+
+
+    private JMenuItem menuItemDooku;
     private final JMenu menuMode;
 
 
@@ -37,9 +53,26 @@ public class SDMenuBar extends JMenuBar{
 
         menuTheme.add(menuItemBoring);
         this.add(menuTheme);
-        menuItemAncientRome = new JMenuItem("Rome Antique");
 
+        menuItemAncientRome = new JMenuItem("Rome Antique");
         menuTheme.add(menuItemAncientRome);
+
+        menuItemUnicorn1 = new JMenuItem("Licornes 1");
+        menuTheme.add(menuItemUnicorn1);
+        menuItemUnicorn2 = new JMenuItem("Licornes 2");
+        menuTheme.add(menuItemUnicorn2);
+        menuItemUnicorn3 = new JMenuItem("Licornes 3");
+        menuTheme.add(menuItemUnicorn3);
+
+        menuItemDooku = new JMenuItem("Comte Dooku");
+        menuTheme.add(menuItemDooku);
+
+        menuItemPokemonStarter = new JMenuItem("Pokemon Starter");
+        menuTheme.add(menuItemPokemonStarter);
+        menuItemLeaves = new JMenuItem("Feuilles");
+        menuTheme.add(menuItemLeaves);
+        menuItemFruitsAndVegetables = new JMenuItem("Fruits et Légumes");
+        menuTheme.add(menuItemFruitsAndVegetables);
 
         menuMode = new JMenu("Placement");
 
@@ -151,4 +184,27 @@ public class SDMenuBar extends JMenuBar{
         return menuMode;
     }
 
+    public JMenuItem getMenuItemUnicorn1() {
+        return menuItemUnicorn1;
+    }
+
+    public JMenuItem getMenuItemUnicorn2() {
+        return menuItemUnicorn2;
+    }
+    public JMenuItem getMenuItemDooku() {
+        return menuItemDooku;
+    }
+    public JMenuItem getMenuItemUnicorn3() {
+        return menuItemUnicorn3;
+    }
+
+    public JMenuItem getMenuItemPokemonStarter() {
+        return menuItemPokemonStarter;
+    }
+    public JMenuItem getMenuItemLeaves() {
+        return menuItemLeaves;
+    }
+    public JMenuItem getMenuItemFruitsAndVegetables() {
+        return menuItemFruitsAndVegetables;
+    }
 }

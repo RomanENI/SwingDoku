@@ -41,7 +41,8 @@ public class Theme {
     private Color panRightMsgColor;
     private Color centralPanelGapsColor;
 
-    public Theme(String themeName){
+    public
+    Theme(String themeName){
         this.path = pathSetter(themeName);
         loadImageLeftPanel(this.path);
         loadImageOptionPanel(this.path);
@@ -390,6 +391,20 @@ public class Theme {
             returnValue = "Resources/Theme Boring";
         } else if (validThemeName.equals("rome antique")) {
             returnValue = "Resources/Theme Rome Antique";
+        }else if(validThemeName.equals("Licorne 1")){
+            returnValue = "Resources/Theme Licorne 1";
+        }else if(validThemeName.equals("Licorne 2")){
+            returnValue = "Resources/Theme Licorne 2";
+        }else if(validThemeName.equals("Comte Dooku")){
+            returnValue = "Resources/Theme Count Dooku";
+        }else if(validThemeName.equals("Licorne 3")){
+            returnValue = "Resources/Theme Licorne 3";
+        }else if(validThemeName.equals("Pokemon Starter")){
+            returnValue = "Resources/Theme Pokemon Starter";
+        }else if(validThemeName.equals("Feuilles")){
+            returnValue = "Resources/Theme Feuilles";
+        }else if(validThemeName.equals("Fruits et Legumes")){
+            returnValue = "Resources/Theme Fruits et Legumes";
         }
 
 

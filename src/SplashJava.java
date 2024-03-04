@@ -7,7 +7,10 @@ public class SplashJava extends JFrame {
     Image splashScreen;
     ImageIcon imageIcon;
 
+    SwingDokuWindow instance ;
+
     public SplashJava() {
+        instance = SwingDokuWindow.giveInstance();
         splashScreen = Toolkit.getDefaultToolkit().getImage("Resources/loadScreen/swingdoku loading.jpg");
         // Create ImageIcon from Image
         imageIcon = new ImageIcon(splashScreen);
@@ -41,8 +44,10 @@ public class SplashJava extends JFrame {
             @Override
             public void windowClosed(WindowEvent e) {
                 System.out.println("closed");
+                    instance.setVisible(true);
 //                System.exit(0);
-                SwingDokuWindow sdw = new SwingDokuWindow();
+//                SwingDokuWindow sdw = new SwingDokuWindow();
+
 //                sdw.display();
                 System.out.println("displayed : =)");
 

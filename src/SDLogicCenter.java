@@ -420,27 +420,39 @@ public class SDLogicCenter {
     public int[][] giveGridMoreThan24Clues(int finalClueNumber){
 
         int[][] madeGrid = new int[9][9];
+        int[] safeGuard = new int[1];
+        safeGuard[0] = 0;
         generateGridEasy(madeGrid);
-        reduceSome(madeGrid, finalClueNumber);
+        reduceSome(madeGrid, finalClueNumber, safeGuard);
         shuffleGrid(madeGrid);
+
+        safeGuard[0] = 0;
+        System.out.println("yes");
         return madeGrid;
 
     }
 
-    private void reduceSome(int[][] gridToReduce, int finalClueNumber){
+    private void reduceSome(int[][] gridToReduce, int finalClueNumber, int[] safeGuard){
 
         int[] coordsForMethod = randomList1to81();
         int number = finalClueNumber;
         int clueNumber = number;
         boolean bool = false;
         do {
-
+            safeGuard[0]++;
             bool = reduceGridtoXClues(gridToReduce, coordsForMethod, clueNumber);
             clueNumber++;
-        }while (!bool);
+        }while (!bool && safeGuard[0] < 1000);
 
-        if (clueNumber != number+1){
-            reduceSome(gridToReduce, finalClueNumber);
+        if (clueNumber != number+1 && safeGuard[0] < 1000){
+//            System.out.println(safeGuard[0]);
+            reduceSome(gridToReduce, finalClueNumber, safeGuard);
+        }else if (safeGuard[0] >= 1000 && nbNotEmptySquare(gridToReduce) > 81 - finalClueNumber){
+
+            generateGridEasy(gridToReduce);
+            System.out.println("safeGuard : " + safeGuard[0]);
+            safeGuard[0] = 0;
+            reduceSome(gridToReduce, finalClueNumber, safeGuard);
         }
     }
 
@@ -516,7 +528,7 @@ public class SDLogicCenter {
                 }
             }
         }
-        System.out.println("found a grid");
+//        System.out.println("found a grid");
         return true;
     }
 

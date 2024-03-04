@@ -49,12 +49,14 @@ public class PanelGrid extends JPanel {
     private Game game;
 
     private JButton submitButton;
+    private JButton playGridButton;
 
 
 
 
 
-    PanelGrid(SDMenuBar menuBar, int[][] board, PanelOnRight panelMessages, JButton submitButton){
+    PanelGrid(SDMenuBar menuBar, int[][] board, PanelOnRight panelMessages, JButton submitButton, JButton playGridButton){
+        this.playGridButton = playGridButton;
         this.submitButton = submitButton;
         this.lockedPanels = new ArrayList<>();
         this.panelMessages = panelMessages;
@@ -618,12 +620,13 @@ public class PanelGrid extends JPanel {
 
                     System.out.println(panelSource.getValue());
                     System.out.println(evt.getNewValue());
-                    checkGridState(panelSource.getValue(), (int)evt.getNewValue());
+
 
 
 
 
                 }
+                checkGridState(panelSource.getValue(), (int)evt.getNewValue());
             }else if (evt.getPropertyName().equals("modified from button")){
 
 
@@ -745,18 +748,12 @@ public class PanelGrid extends JPanel {
             this.submitButton.setEnabled(true);
             this.submitButton.setToolTipText(null);
 
-            //TODO DID WE WIN THOUGH
-//            System.out.println("did we win? :");
-//            System.out.println(logic.didWeWin(abstractBoard, newValue));
-
-
-//            if (logic.didWeWin(abstractBoard, newValue)){
-//                weWin();
-//            }else {
-//                System.out.println("did not win this time");
-//            }
+            if(checkCoherence){
+                this.playGridButton.setEnabled(false);
+            }
         }else {
             this.submitButton.setEnabled(false);
+            this.playGridButton.setEnabled(true);
             this.submitButton.setToolTipText("La grille est incomplète");
         }
     }

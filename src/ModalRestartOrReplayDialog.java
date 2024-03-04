@@ -32,7 +32,7 @@ public class ModalRestartOrReplayDialog {
 
     private void openModalDialog(SwingDokuWindow parentFrame) {
 
-        JDialog modalDialog = new JDialog(parentFrame, "Modal Dialog", true);
+        JDialog modalDialog = new JDialog(parentFrame, "Immense victoire", true);
 
         modalDialog.setTitle("Custom dialog");
 
