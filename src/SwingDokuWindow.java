@@ -232,6 +232,8 @@ public class SwingDokuWindow extends JFrame {
             getPanelWithGrid().getLockedPanels().clear();
             SDLogicCenter logic = new SDLogicCenter();
             getPanelWithGrid().lockNonEmptyPanels();
+            setGridCoherenceStatus(false);
+            goPlay();
         }
 
         private void setupPlayConstructedGridButton() {
@@ -521,8 +523,8 @@ public class SwingDokuWindow extends JFrame {
         }
 
         private void goBuildOptionPanGridMakingMod() {
-            SDLogicCenter logic = new SDLogicCenter();
-            switchAbstractBoards();
+
+
 
             //disable undo menu
             sdMenuBar.disableUndo();
@@ -699,11 +701,14 @@ public class SwingDokuWindow extends JFrame {
             //sout
             System.out.println(chosenString);
             int[][] grid = makeGridFromExtractedString(chosenString);
+            SDLogicCenter logic = new SDLogicCenter();
+            logic.shuffleGrid(grid);
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 9; j++) {
                     abstractBoard[j][i] = grid[j][i];
                 }
             }
+
             updateConcreteBoard();
 
 
@@ -728,7 +733,7 @@ public class SwingDokuWindow extends JFrame {
             makeGridFromFile(18);
         }
         private void giveXtremeGrid(ActionEvent actionEvent){
-            makeGridFromFile(17);
+            load17GridAction(actionEvent);
         }
 
         private void makeGridFromFile(int totalClues){
@@ -962,7 +967,13 @@ public class SwingDokuWindow extends JFrame {
             logic.generateGridEasy(madeGrid);
             reduceSome(madeGrid, finalClueNumber);
             logic.shuffleGrid(madeGrid);
-            abstractBoard = madeGrid;
+
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    abstractBoard[i][j] = madeGrid[i][j];
+                }
+            }
+
             System.out.println("in the end we had "+(logic.nbNotEmptySquare(abstractBoard))+" clues placed");
             updateConcreteBoard();
         }
@@ -1032,11 +1043,19 @@ public class SwingDokuWindow extends JFrame {
             return movingOn;
         }
 
-        private void goPlay(ActionEvent event) {
+        private void goPlayAction(ActionEvent event) {
 
 
+            goPlay();
+
+
+        }
+
+        private void goPlay() {
+            System.out.println("we go play");
             this.getPanelWithGrid().getLockedPanels().clear();
             SDLogicCenter logic = new SDLogicCenter();
+            logic.displayAbstractBoard(abstractBuildBoard);
 
             if (checkGridPurity()){
 
@@ -1063,12 +1082,12 @@ public class SwingDokuWindow extends JFrame {
                 updateConcreteBoard();
                 this.getPanelWithGrid().lockNonEmptyPanels();
 
+                System.out.println("we are in goPlay");
+                System.out.println(abstractBoard == abstractPlayBoard);
                 //we store solution(s) somewhere
                 currentGame = new Game(abstractBoard);
 
             }
-
-
         }
 
         private void resetActions() {
@@ -1248,12 +1267,9 @@ public class SwingDokuWindow extends JFrame {
             int[] yAxis = logic.randomSequence0to8();
             int[] coords = logic.randomList1to81();
             int[][] board = new int[9][9];
-//        initializeAbstractBoard(board, 0);
 
             while (logic.nbNotEmptySquare(board) < 16){
                 placeOneRandomNumber(board);
-//            System.out.println("hi");
-//            System.out.println(16 - nbNotEmptySquare(board)+" clues yet to place");
 
             }
             System.out.println("We placed "+(logic.nbNotEmptySquare(board))+" clues");
@@ -1492,6 +1508,7 @@ public class SwingDokuWindow extends JFrame {
                             logic.displayAbstractBoard(abstractBoard);
                             logic.displayAbstractBoard(currentGame.getStartingPosition());
                             mainPanel.updateConcreteBoard();
+                            getMainPanel().getPanelWithGrid().lockNonEmptyPanels();
                             mainPanel.submitButton.setEnabled(false);
                             //reset actions
                             getMainPanel().getPanelWithGrid().playActionHandler.clearActions();
@@ -1513,6 +1530,13 @@ public class SwingDokuWindow extends JFrame {
 
                             mainPanel.submitButton.setEnabled(false);
                             mainPanel.goBuildOptionPanGridMakingMod();
+                            for(Object object : getMainPanel().getBottomPanel().getComponents()){
+                                if(object instanceof JButton ){
+                                    if(((JButton) object).getText().equals("Annuler")){
+                                        getMainPanel().getBottomPanel().remove((JButton)object);
+                                    }
+                                }
+                            }
                             getMainPanel().getRightPanel().goModeBuild();
                         }
                     };
@@ -1590,9 +1614,10 @@ public class SwingDokuWindow extends JFrame {
         if (abstractPlayBoard == null){
             abstractPlayBoard = new int[9][9];
         }
-        abstractBoard = abstractPlayBoard;
+        abstractBoard = abstractBuildBoard;
 //        initAbstractBoard(abstractBoard, 11);
         getMainPanel().createGridMoreThan24Clues(26);
+
 
         mainPanel.lockGridAndPlay();
     }
