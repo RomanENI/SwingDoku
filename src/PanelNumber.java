@@ -60,11 +60,6 @@ public class PanelNumber extends JPanel {
     private ArrayList<ImageIcon> imgsLocked;
     private ArrayList<ImageIcon> imgsSmallFocussed;
 
-
-    public int[][] getAbstractBoard() {
-        return abstractBoard;
-    }
-
     public void setAbstractBoard(int[][] abstractBoard) {
         this.abstractBoard = abstractBoard;
     }
@@ -97,9 +92,9 @@ public class PanelNumber extends JPanel {
         this.imgsLocked = imageNumberLocked;
         this.abstractBoard = abstractBoard;
         this.logic = new SDLogicCenter();
-        this.imageNormal = new ImageIcon();
+
         this.imageNormal = imageNumber.get(value);
-        this.imageFocus = new ImageIcon();
+
         this.imageFocus = imageNumberFocus.get(value);
 
 
@@ -197,7 +192,6 @@ public class PanelNumber extends JPanel {
                             if (e.getKeyChar() == value){
                                 int charToInt = Character.getNumericValue(value);
 
-//                            addActionToList(panel, value);
                                 panel.getObs().panelChangeValue(charToInt);
                                 System.out.println("charToTint : "+charToInt);
                                 panel.changeNumber(charToInt);
@@ -206,7 +200,6 @@ public class PanelNumber extends JPanel {
                     }
 
                     panel.losePanelFocus();
-//                System.out.println(panel.value);
                 }
             };
         this.addKeyListener(keyListener);
@@ -215,11 +208,6 @@ public class PanelNumber extends JPanel {
 
     public void removeListeners(){
 
-//        this.removeMouseListener(mouseReleasedAdapter);
-//        this.removeMouseListener(focusListener);
-//        this.removeKeyListener(keyListener);
-//        this.popupMenu.removePopupMenuListener(deFocusListener);
-//        this.remove(popupMenu);
         for (MouseListener mouse : this.getMouseListeners()){
             this.removeMouseListener(mouse);
         }
@@ -448,7 +436,6 @@ public class PanelNumber extends JPanel {
             this.add(focussedValueImage, BorderLayout.CENTER);
 
             this.requestFocus();
-//        this.frame(this.coordX, this.coordY);
 
             //grid update
             grid.revalidate();
@@ -464,7 +451,7 @@ public class PanelNumber extends JPanel {
     private void losePanelFocus(){
         if (!this.isClueMode()){
             KeyboardFocusManager.getCurrentKeyboardFocusManager().clearFocusOwner();
-            BorderLayout layout = (BorderLayout) this.getLayout();
+            BorderLayout layout = this.getLayout();
             this.remove(layout.getLayoutComponent(BorderLayout.CENTER));
             this.add(getImageNumberNormal(this.value),BorderLayout.CENTER);
             JPanel grid = (JPanel) this.getParent();
@@ -508,7 +495,7 @@ public class PanelNumber extends JPanel {
 
         createCluePlacerMenu(submenu);
 
-        buildPopUpMenuTestItems();
+
         //test button candidates after naked pairs?
 
 
@@ -522,129 +509,7 @@ public class PanelNumber extends JPanel {
     }
 
 
-    public void buildPopUpMenuTestItems(){
 
-        JMenuItem itemClueMode = new JMenuItem("toggle Cluemode");
-        itemClueMode.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PanelNumber panelsource = (PanelNumber) ((JPopupMenu)((JMenuItem)e.getSource()).getParent()).getInvoker();
-
-                panelsource.toggleClueMode();
-
-            }
-        });
-        this.popupMenu.add(itemClueMode);
-
-        JMenuItem itemTestClues = new JMenuItem("go clueTestPanel");
-        itemTestClues.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PanelNumber panelsource = (PanelNumber) ((JPopupMenu)((JMenuItem)e.getSource()).getParent()).getInvoker();
-
-                panelsource.remove(panelsource.getLayout().getLayoutComponent(BorderLayout.CENTER));
-                panelsource.add(panelsource.getClueHolder(), BorderLayout.CENTER);
-                panelsource.setClueMode(true);
-
-
-
-
-                panelsource.revalidate();
-                panelsource.repaint();
-
-            }
-        });
-        this.popupMenu.add(itemTestClues);
-
-        JMenuItem itemtestRemove = new JMenuItem("remove some");
-        itemtestRemove.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PanelNumber panelsource = (PanelNumber) ((JPopupMenu)((JMenuItem)e.getSource()).getParent()).getInvoker();
-
-                CluesHolder holder = panelsource.getClueHolder();
-                holder.removeClue(3);
-                holder.removeClue(5);
-                holder.removeClue(9);
-
-
-
-
-                panelsource.revalidate();
-                panelsource.repaint();
-
-            }
-        });
-        this.popupMenu.add(itemtestRemove);
-//            //test button give your coords
-//            JMenuItem coordGiver = new JMenuItem("coordTest");
-//            coordGiver.addActionListener(new ActionListener() {
-//                @Override
-//                public void actionPerformed(ActionEvent e) {
-//                    PanelNumber panelsource = (PanelNumber) ((JPopupMenu)((JMenuItem)e.getSource()).getParent()).getInvoker();
-//                    System.out.println("X : "+ panelsource.coordX +"   Y : "+panelsource.coordY);
-//                }
-//            });
-//            popUpMenu.add(coordGiver);
-//            // ---- TEST -----------------
-
-        //test button can you deduce this line ?
-        JMenuItem simpleDeduces = new JMenuItem("Déduction Unicité");
-        simpleDeduces.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PanelNumber panelsource = (PanelNumber) ((JPopupMenu)((JMenuItem)e.getSource()).getParent()).getInvoker();
-                int[] nbDeduced = logic.candidatesUnicityMethod(panelsource.coordX, panelsource.coordY, abstractBoard);
-                for (int i = 0; i < nbDeduced.length; i++) {
-                    System.out.print(nbDeduced[i]+"  ");
-                }
-                System.out.println();
-            }
-        });
-        this.popupMenu.add(simpleDeduces);
-        // ---- TEST -----------------
-
-        //test button can you deduce this line with neighbour unicity?
-        JMenuItem simpleDeducesExclusion = new JMenuItem("Déduction Unicité et Exclusion");
-        simpleDeducesExclusion.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PanelNumber panelsource = (PanelNumber) ((JPopupMenu)((JMenuItem)e.getSource()).getParent()).getInvoker();
-                int[] nbDeduced = logic.candidatesUnicityAndExclusions(panelsource.coordX, panelsource.coordY, abstractBoard);
-                System.out.println("Super final candidate : ");
-                for (int i = 0; i < nbDeduced.length; i++) {
-                    System.out.print(nbDeduced[i]+"  ");
-                }
-                System.out.println();
-//                    System.out.println("pi che toute");
-                if (nbDeduced.length == 1){
-                    panelsource.changeNumber(nbDeduced[0]);
-                }
-            }
-
-        });
-        this.popupMenu.add(simpleDeducesExclusion);
-        // ---- TEST -----------------
-        JMenuItem itemCandidatesAfterNP = new JMenuItem("Candidats après double NP");
-        itemCandidatesAfterNP.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PanelNumber panelsource = (PanelNumber) ((JPopupMenu)((JMenuItem)e.getSource()).getParent()).getInvoker();
-                int[] candidatesUnicity = logic.candidatesUnicityMethod(panelsource.coordX, panelsource.coordY, abstractBoard);
-                int[] nbDeduced = logic.candidatesAfterEliminatingNakedPairs(panelsource.coordX, panelsource.coordY, abstractBoard, candidatesUnicity);
-                System.out.println("Candidats après double NP : ");
-                for (int i = 0; i < nbDeduced.length; i++) {
-                    System.out.print(nbDeduced[i]+"  ");
-                }
-                System.out.println();
-
-            }
-
-        });
-        this.popupMenu.add(itemCandidatesAfterNP);
-
-
-    }
 
 
     public void buildPopupMenuCluesMain(){
@@ -653,7 +518,7 @@ public class PanelNumber extends JPanel {
         JMenu submenu = new JMenu("Certitude");
         this.popupMenu.add(submenu);
         createFullNumberMenuItems(submenu);
-        buildPopUpMenuTestItems();
+
 
         //test button candidates after naked pairs?
 
@@ -742,25 +607,6 @@ public class PanelNumber extends JPanel {
         }
     }
 
-    private void toggleClueMode() {
-        if (this.isClueMode()){
-//            this.remove(this.getLayout().getLayoutComponent(BorderLayout.CENTER));
-//
-//            JLabel label = new JLabel(this.getImageNormal());
-//            this.add(label, BorderLayout.CENTER);
-            this.changeDisplayToValue();
-            this.setClueMode(false);
-            this.revalidate();
-            this.repaint();
-        }else {
-//            this.remove(this.getLayout().getLayoutComponent(BorderLayout.CENTER));
-//            this.add(this.getClueHolder(), BorderLayout.CENTER);
-            this.changeDisplayToClues();
-            this.setClueMode(true);
-            this.revalidate();
-            this.repaint();
-        }
-    }
 
     private void placeClue(int value) {
 
@@ -813,20 +659,7 @@ public class PanelNumber extends JPanel {
 
             panel.revalidate();
             panel.repaint();
-            //message if grid is possible or no after adding a number
-//                if (checkGridCoherence){
-//                    int[][] temporaryCopyOfAbstractBoard = new int[9][9];
-//                    for (int i = 0; i < 9; i++) {
-//                        for (int j = 0; j < 9; j++) {
-//                            temporaryCopyOfAbstractBoard[i][j] = abstractBoard[i][j];
-//                        }
-//                    }
-//                    if (possibleGrid(temporaryCopyOfAbstractBoard)){
-//                        System.out.println("Grid is still feasible");
-//                    }else {
-//                        System.out.println("Grid has no solution");
-//                    }
-//                }
+
         }else {
             ArrayList<Object> list = logic.checkPossibleFitError(coordX, coordY, value, abstractBoard);
             JButton button = new JButton("voir les cases");
@@ -904,8 +737,7 @@ public class PanelNumber extends JPanel {
 
 
     public void changeNumber(int newValue){
-//       SDLogicCenter logic = new SDLogicCenter();
-//       logic.displayAbstractBoard(abstractBoard);
+
 
         //change number handles value update
         abstractBoard[this.coordY][this.coordX] = newValue;
@@ -1000,40 +832,25 @@ public class PanelNumber extends JPanel {
         this.remove(this.getLayout().getLayoutComponent(BorderLayout.CENTER));
         this.add(this.getClueHolder(), BorderLayout.CENTER);
 
-
-
         this.revalidate();
         this.repaint();
 
 
     }
 
-    public void changeDisplayToValue(){
-        this.remove(this.getLayout().getLayoutComponent(BorderLayout.CENTER));
-
-        this.add(this.getImageNumberNormal(this.value), BorderLayout.CENTER);
-        this.revalidate();
-        this.repaint();
-
-
-    }
 
 
     public int getCoordX(){
         return this.coordX;
     }
 
-    public void setCoordX(int x){
-        this.coordX = x;
-    }
+
 
     public int getCoordY(){
         return this.coordY;
     }
 
-    public void setCoordY(int y){
-        this.coordY = y;
-    }
+
 
     public int getValue(){
         return this.value;
@@ -1043,9 +860,7 @@ public class PanelNumber extends JPanel {
         this.value = newValue;
     }
 
-    public void setPopupMenu(JPopupMenu popupMenu) {
-        this.popupMenu = popupMenu;
-    }
+
 
     public ImageIcon getImageNormal(){
         return imageNormal;
@@ -1055,25 +870,17 @@ public class PanelNumber extends JPanel {
         this.imageNormal = newImageNormal;
     }
 
-    public ImageIcon getImageFocus(){
-        return imageFocus;
-    }
 
     public void setImageFocus(ImageIcon newImageFocus){
         this.imageFocus = newImageFocus;
     }
 
-    public boolean isGridCoherenceStatus() {
-        return gridCoherenceStatus;
-    }
+
 
     public void setGridCoherenceStatus(boolean gridCoherenceStatus) {
         this.gridCoherenceStatus = gridCoherenceStatus;
     }
 
-    public void setLogic(SDLogicCenter logic) {
-        this.logic = logic;
-    }
 
     public void setImgsFocus(ArrayList<ImageIcon> imgsFocus) {
         this.imgsFocus = imgsFocus;
@@ -1098,9 +905,6 @@ public class PanelNumber extends JPanel {
 
     public void setImgsNormal(ArrayList<ImageIcon> imgsNormal) {
         this.imgsNormal = imgsNormal;
-    }
-    public ArrayList<ImageIcon> getImgsSmall() {
-        return imgsSmall;
     }
 
     public void setFrameColorIn(Color frameColor) {
@@ -1129,13 +933,7 @@ public class PanelNumber extends JPanel {
         return clueHolder;
     }
 
-    public void setClueHolder(CluesHolder clueHolder) {
-        this.clueHolder = clueHolder;
-    }
 
-    public ArrayList<ImageIcon> getImgsSmallFocussed() {
-        return imgsSmallFocussed;
-    }
 
     public void setImgsSmallFocussed(ArrayList<ImageIcon> imgsSmallFocussed) {
         this.imgsSmallFocussed = imgsSmallFocussed;
@@ -1292,85 +1090,13 @@ public class PanelNumber extends JPanel {
             return displayedClues;
         }
 
-        public JPanel getClue1() {
-            return clue1;
-        }
 
-        public void setClue1(JPanel clue1) {
-            this.clue1 = clue1;
-        }
-
-        public JPanel getClue2() {
-            return clue2;
-        }
-
-        public void setClue2(JPanel clue2) {
-            this.clue2 = clue2;
-        }
-
-        public JPanel getClue3() {
-            return clue3;
-        }
-
-        public void setClue3(JPanel clue3) {
-            this.clue3 = clue3;
-        }
-
-        public JPanel getClue4() {
-            return clue4;
-        }
-
-        public void setClue4(JPanel clue4) {
-            this.clue4 = clue4;
-        }
-
-        public JPanel getClue5() {
-            return clue5;
-        }
-
-        public void setClue5(JPanel clue5) {
-            this.clue5 = clue5;
-        }
-
-        public JPanel getClue6() {
-            return clue6;
-        }
-
-        public void setClue6(JPanel clue6) {
-            this.clue6 = clue6;
-        }
-
-        public JPanel getClue7() {
-            return clue7;
-        }
-
-        public void setClue7(JPanel clue7) {
-            this.clue7 = clue7;
-        }
-
-        public JPanel getClue8() {
-            return clue8;
-        }
-
-        public void setClue8(JPanel clue8) {
-            this.clue8 = clue8;
-        }
-
-        public JPanel getClue9() {
-            return clue9;
-        }
-
-        public void setClue9(JPanel clue9) {
-            this.clue9 = clue9;
-        }
 
         public ArrayList<JPanel> getCurrentlyDisplayedPanels() {
             return currentlyDisplayedPanels;
         }
 
-        public void setCurrentlyDisplayedPanels(ArrayList<JPanel> currentlyDisplayedPanels) {
-            this.currentlyDisplayedPanels = currentlyDisplayedPanels;
-        }
+
 
     }
 

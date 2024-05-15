@@ -2,14 +2,11 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.io.*;
+
 import java.nio.file.Path;
-import java.nio.file.Paths;
+
 import java.util.ArrayList;
-import java.util.stream.Stream;
 
 public class Theme {
 
@@ -59,7 +56,22 @@ public class Theme {
     }
 
     private void loadImageWinScreen(String pathStart) {
-        this.imgWinScreen = new ImageIcon(pathStart+"/winScreen/win.gif");
+        String finalPath = pathStart + "/winScreen/win.gif";
+//        try {
+            ImageIcon icon = new ImageIcon(getClass().getResource(finalPath));
+
+
+//            InputStream is = new FileInputStream(finalPath);
+//            BufferedInputStream stream = new BufferedInputStream(is);
+//            Image image = Toolkit.getDefaultToolkit().createImage(org.apache.commons.io.IOUtils.toByteArray(stream));
+//            BufferedImage img = ImageIO.read(getClass().getResourceAsStream(finalPath));
+//            ImageIcon icon = new ImageIcon(image);
+            this.imgWinScreen = icon;
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+
+
     }
 
     private BufferedImage getBufferedImgWinScreen(String pathStart){
@@ -92,7 +104,8 @@ public class Theme {
             this.lblOptionPanel = new JLabel();
         }
         try {
-            img = ImageIO.read(new File(pathStart+"/panels/optionPanel/optionPanelPicture.jpg"));
+            String fullPath = pathStart + "/panels/optionPanel/optionPanelPicture.JPG";
+            img = ImageIO.read(getClass().getResourceAsStream(fullPath));
             Image dimg = img.getScaledInstance(540, 216,Image.SCALE_SMOOTH);
             ImageIcon imageIcon = new ImageIcon(dimg);
             this.imgIconOptionPan = imageIcon;
@@ -106,7 +119,8 @@ public class Theme {
     private void loadImgIconMsgeBorder(String pathStart) {
         BufferedImage img = null;
         try {
-            img = ImageIO.read(new File(pathStart+"/panels/rightPanel/messages/borders/omnidirectionnel.jpg"));
+            String fullPath = pathStart + "/panels/rightPanel/messages/borders/omnidirectionnel.JPG";
+            img = ImageIO.read(getClass().getResourceAsStream(fullPath));
             Image dimg = img.getScaledInstance(20, 10,Image.SCALE_SMOOTH);
             ImageIcon imageIcon = new ImageIcon(dimg);
             this.imgIconMsgeBorder = imageIcon;
@@ -128,7 +142,8 @@ public class Theme {
     private BufferedImage getBufferedImgLeftPanel(String pathStart){
         BufferedImage img = null;
         try {
-            img = ImageIO.read(new File(pathStart+"/panels/leftPanel/leftPanImg.jpg"));
+            String fullPath = pathStart+"/panels/leftPanel/leftPanImg.JPG";
+            img = ImageIO.read(getClass().getResourceAsStream(fullPath));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -148,7 +163,8 @@ public class Theme {
     private BufferedImage getBufferedImgOptionPanel(String pathStart){
         BufferedImage img = null;
         try {
-            img = ImageIO.read(new File(pathStart+"/panels/optionPanel/optionPanelPicture.jpg"));
+            String fullPath = pathStart+"/panels/optionPanel/optionPanelPicture.JPG";
+            img = ImageIO.read(getClass().getResourceAsStream(fullPath));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -165,7 +181,9 @@ public class Theme {
     private BufferedImage getBufferedImgRightPanel(String pathStart){
         BufferedImage img = null;
         try {
-            img = ImageIO.read(new File(pathStart+"/panels/rightPanel/rightPanelPicture.jpg"));
+            String fullPath = pathStart + "/panels/rightPanel/rightPanelPicture.JPG";
+            img = ImageIO.read(getClass().getResourceAsStream(fullPath));
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -187,7 +205,8 @@ public class Theme {
         for (int i = 1;i<=9;i++){
             BufferedImage img = null;
             try {
-                img = ImageIO.read(new File(this.path+"/Images/Locked/"+i+".png"));
+                String finalPath = this.path+"/Images/Locked/"+i+".PNG";
+                img = ImageIO.read(getClass().getResourceAsStream(finalPath));
                 Image dimg = img.getScaledInstance(imgScaleInstance, imgScaleInstance,Image.SCALE_SMOOTH);
                 ImageIcon imageIcon = new ImageIcon(dimg);
                 this.imgsLocked.add(imageIcon);
@@ -203,7 +222,8 @@ public class Theme {
         for (int i = 0;i<=9;i++){
             BufferedImage img = null;
             try {
-                img = ImageIO.read(new File(this.path+"/Images/Normal/"+i+".png"));
+                String finalPath = this.path+"/Images/Normal/"+i+".PNG";
+                img = ImageIO.read(getClass().getResourceAsStream(finalPath));
                 Image dimg = img.getScaledInstance(imgScaleInstanceSmall, imgScaleInstanceSmall,Image.SCALE_SMOOTH);
                 ImageIcon imageIcon = new ImageIcon(dimg);
                 this.imgsSmall.add(imageIcon);
@@ -226,22 +246,29 @@ public class Theme {
 
     private Color loadColorFromFile(String pathToColor){
         Path filePath = Path.of(pathToColor);
-        StringBuilder contentBuilder = new StringBuilder();
 
-        try (Stream<String> stream = Files.lines(Paths.get(filePath.toUri()), StandardCharsets.UTF_8)) {
+        try (InputStream inputStream = getClass().getResourceAsStream(pathToColor)) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            String[] array = new String[3];
 
-            stream.forEach(s -> contentBuilder.append(s).append("\n"));
-        } catch (IOException e) {
-            //handle exception
+            int i = 0;
+            String line;
+            while ((line = reader.readLine()) != null && i < array.length) {
+                array[i++] = line;
+            }
+
+            int red = Integer.parseInt(array[0]);
+            int green = Integer.parseInt((array[1]));
+            int blue = Integer.parseInt((array[2]));
+            Color theColor = new Color(red, green, blue);
+            return theColor;
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        String fileContent = contentBuilder.toString();
-        String[] array = fileContent.split("\n");
-        int red = Integer.parseInt(array[0]);
-        int green = Integer.parseInt((array[1]));
-        int blue = Integer.parseInt((array[2]));
-        Color theColor = new Color(red, green, blue);
-        return theColor;
+        return null;
     }
 
 
@@ -260,7 +287,8 @@ public class Theme {
         for (int i = 0;i<=9;i++){
             BufferedImage img = null;
             try {
-                img = ImageIO.read(new File(this.path+"/Images/Normal/"+i+".png"));
+                String fullPath = this.path+"/Images/Normal/"+i+".PNG";
+                img = ImageIO.read(getClass().getResourceAsStream(fullPath));
                 Image dimg = img.getScaledInstance(imgScaleInstance, imgScaleInstance,Image.SCALE_SMOOTH);
                 ImageIcon imageIcon = new ImageIcon(dimg);
                 this.imgsNormal.add(imageIcon);
@@ -275,7 +303,8 @@ public class Theme {
         for (int i = 0;i<=9;i++){
             BufferedImage img = null;
             try {
-                img = ImageIO.read(new File(this.path+"/Images/Focussed/"+i+".png"));
+                String finalPath = this.path+"/Images/Focussed/"+i+".PNG";
+                img = ImageIO.read(getClass().getResourceAsStream(finalPath));
                 Image dimg = img.getScaledInstance(imgScaleInstance, imgScaleInstance,Image.SCALE_SMOOTH);
                 ImageIcon imageIcon = new ImageIcon(dimg);
                 this.imgsFocussed.add(imageIcon);
@@ -290,7 +319,8 @@ public class Theme {
         for (int i = 0;i<=9;i++){
             BufferedImage img = null;
             try {
-                img = ImageIO.read(new File(this.path+"/Images/Focussed/"+i+".png"));
+                String finalPath = this.path+"/Images/Focussed/"+i+".PNG";
+                img = ImageIO.read(getClass().getResourceAsStream(finalPath));
                 Image dimg = img.getScaledInstance(imgScaleInstanceSmall, imgScaleInstanceSmall,Image.SCALE_SMOOTH);
                 ImageIcon imageIcon = new ImageIcon(dimg);
                 this.imgsSmallAndFocussed.add(imageIcon);
@@ -388,25 +418,24 @@ public class Theme {
         String returnValue = "";
 
         if (validThemeName.equals("boring")){
-            returnValue = "Resources/Theme Boring";
+            returnValue = "/Theme Boring";
         } else if (validThemeName.equals("rome antique")) {
-            returnValue = "Resources/Theme Rome Antique";
+            returnValue = "/Theme Rome Antique";
         }else if(validThemeName.equals("Licorne 1")){
-            returnValue = "Resources/Theme Licorne 1";
+            returnValue = "/Theme Licorne 1";
         }else if(validThemeName.equals("Licorne 2")){
-            returnValue = "Resources/Theme Licorne 2";
+            returnValue = "/Theme Licorne 2";
         }else if(validThemeName.equals("Comte Dooku")){
-            returnValue = "Resources/Theme Count Dooku";
+            returnValue = "/Theme Count Dooku";
         }else if(validThemeName.equals("Licorne 3")){
-            returnValue = "Resources/Theme Licorne 3";
+            returnValue = "/Theme Licorne 3";
         }else if(validThemeName.equals("Pokemon Starter")){
-            returnValue = "Resources/Theme Pokemon Starter";
+            returnValue = "/Theme Pokemon Starter";
         }else if(validThemeName.equals("Feuilles")){
-            returnValue = "Resources/Theme Feuilles";
+            returnValue = "/Theme Feuilles";
         }else if(validThemeName.equals("Fruits et Legumes")){
-            returnValue = "Resources/Theme Fruits et Legumes";
+            returnValue = "/Theme Fruits et Legumes";
         }
-
 
         return returnValue;
     }
@@ -418,7 +447,10 @@ public class Theme {
             this.imgLeftPanel = new JLabel();
         }
         try {
-            img = ImageIO.read(new File(pathStart+"/panels/leftPanel/leftPanImg.jpg"));
+
+            String fullPath = pathStart + "/panels/leftPanel/leftPanImg.JPG";
+            img = ImageIO.read(getClass().getResourceAsStream(fullPath));
+
             Image dimg = img.getScaledInstance(320, 761,Image.SCALE_SMOOTH);
             ImageIcon imageIcon = new ImageIcon(dimg);
             this.imgIconLeftPan = imageIcon;

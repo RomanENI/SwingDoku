@@ -23,7 +23,7 @@ public class PanelGrid extends JPanel {
     private ArrayList<ImageIcon> loadedNumberIconsSmallAndFocussed;
 
 
-    private final String defaultTheme = "boring";
+    private final String defaultTheme = "Comte Dooku";
 
     private PanelOnRight panelMessages;
 
@@ -79,15 +79,7 @@ public class PanelGrid extends JPanel {
 
     }//PanelGrid constructor ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void weWin(){
-        System.out.println("we won");
 
-        System.out.println("yet again");
-
-
-
-
-    }
 
     private void activateMenuItems(SDMenuBar menuBar) {
                 menuBar.getUndo().setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK ));
@@ -148,22 +140,6 @@ public class PanelGrid extends JPanel {
                 }
             }
         });
-
-//        ActionListener listenerCertitude = new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//
-//                for (PanelNumber pan : getPanels()){
-//
-//                }
-//
-//
-//
-//
-//            }
-//        };
-
-
     }
 
 
@@ -232,21 +208,6 @@ public class PanelGrid extends JPanel {
         this.checkCoherence = checkCoherence;
     }
 
-    public Game getGame() {
-        return game;
-    }
-
-    public void setGame(Game game) {
-        this.game = game;
-    }
-
-    public void setLoadedNumberIconsSmall(ArrayList<ImageIcon> loadedNumberIconsSmall) {
-        this.loadedNumberIconsSmall = loadedNumberIconsSmall;
-    }
-
-    public ArrayList<ImageIcon> getLoadedNumberIconsFocussed() {
-        return loadedNumberIconsFocussed;
-    }
 
     public void setLoadedNumberIconsFocussed(ArrayList<ImageIcon> loadedNumberIconsFocussed) {
         this.loadedNumberIconsFocussed = loadedNumberIconsFocussed;
@@ -257,29 +218,16 @@ public class PanelGrid extends JPanel {
         abstractBoard = board;
     }
 
-    public int[][] getAbstractBoard(){
-        return abstractBoard;
-    }
 
     public ArrayList<PanelNumber> getPanels() {
         return panels;
     }
 
-    public JButton getSubmitButton() {
-        return submitButton;
-    }
-
-    public void setSubmitButton(JButton submitButton) {
-        this.submitButton = submitButton;
-    }
 
     public ArrayList<ImageIcon> getLoadedNumberIconsSmallAndFocussed() {
         return loadedNumberIconsSmallAndFocussed;
     }
 
-    public void setLoadedNumberIconsSmallAndFocussed(ArrayList<ImageIcon> loadedNumberIconsSmallAndFocussed) {
-        this.loadedNumberIconsSmallAndFocussed = loadedNumberIconsSmallAndFocussed;
-    }
 
     private void initGridPanel() {
 
@@ -297,23 +245,6 @@ public class PanelGrid extends JPanel {
         loadedNumberIcons.addAll(themeForFirstLoad.getImgsNormal());
         loadedNumberIconsSmall.addAll(themeForFirstLoad.getImgsSmall());
         loadedNumberIconsSmallAndFocussed.addAll(themeForFirstLoad.getImgsSmallAndFocussed());
-
-
-    }
-
-
-    public void displayModeToPanelNumbers(){
-        this.removeAll();
-        this.setLayout(new GridBagLayout());
-        GridBagConstraints gb = new GridBagConstraints();
-        for (PanelNumber pan : panels){
-            gb.gridy = pan.getCoordY();
-            gb.gridx = pan.getCoordX();
-            this.add(pan, gb);
-        }
-        this.revalidate();
-        this.repaint();
-
 
 
     }
@@ -375,22 +306,20 @@ public class PanelGrid extends JPanel {
         }
     }
 
-    public class PanelCloseListener implements PropertyChangeListener{
+    public class PanelCloseListener implements PropertyChangeListener {
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             //we just deleted a panel message.
             //in play mode, we must also delete actions associated with this panel, or we will have a ton of bug in the unde redo departement
-            if (!isCheckCoherence()){               //mode play
+            if (!isCheckCoherence()) {               //mode play
 
                 PanelOnRight.PanelMessage source = (PanelOnRight.PanelMessage) evt.getNewValue();
-                if (source instanceof PanelOnRight.PlayMovePan && ((PanelOnRight.PlayMovePan) source).getAction().get("actionSource").equals("panel")){
+                if (source instanceof PanelOnRight.PlayMovePan && ((PanelOnRight.PlayMovePan) source).getAction().get("actionSource").equals("panel")) {
                     removePanActions((PanelOnRight.PlayMovePan) source);
 
                 }
             }
-
-
 
 
         }
@@ -404,24 +333,20 @@ public class PanelGrid extends JPanel {
 //                    }
 //                }
 //            }
-            for (HashMap<String, Object> action : actionHandler.getActionList()){
+            for (HashMap<String, Object> action : actionHandler.getActionList()) {
 
-                    if ((action.get("source") == panelSource)){
-                        toRemove.add(action);
-                    }
+                if ((action.get("source") == panelSource)) {
+                    toRemove.add(action);
+                }
 
             }
 
 
-
-
-            if (toRemove.size() != 0){
-                for (HashMap<String, Object> actionToRemove : toRemove){
+            if (toRemove.size() != 0) {
+                for (HashMap<String, Object> actionToRemove : toRemove) {
 
                     removePanAction(actionToRemove);
-                    System.out.println("removed");
                 }
-                System.out.println(actionHandler.getActionDepthMeter());
             }
         }
 
@@ -429,57 +354,24 @@ public class PanelGrid extends JPanel {
             int counter = 0;
             HashMap<String, Object> compared;
             compared = actionHandler.getActionList().get(counter);
-            while (action != compared && counter <= actionHandler.getActionList().size()){
-                counter ++;
+            while (action != compared && counter <= actionHandler.getActionList().size()) {
+                counter++;
                 compared = actionHandler.getActionList().get(counter);
             }
 
-            if (actionHandler.getActionList().size() - counter <= actionHandler.getActionDepthMeter()){
-                System.out.println("list size : "+actionHandler.getActionList().size());
-                System.out.println("counter : "+ counter);
-                System.out.println("adm before "+actionHandler.getActionDepthMeter());
+            if (actionHandler.getActionList().size() - counter <= actionHandler.getActionDepthMeter()) {
 
 
                 actionHandler.setActionDepthMeter(actionHandler.getActionDepthMeter() - 1);
-                System.out.println("adm after "+actionHandler.getActionDepthMeter());
             }
             actionHandler.getActionList().remove(counter);
 
 
         }
-
-        public PanelCloseListener generateOne(){
-            return new PanelCloseListener();
-        }
     }
 
-//    private void removePanAction(HashMap<String, Object> action) {
-//        int counter = 0;
-//        HashMap<String, Object> compared;
-//        compared = actionHandler.getActionList().get(counter);
-//        while (action != compared && counter <= actionHandler.getActionList().size()){
-//            counter ++;
-//            compared = actionHandler.getActionList().get(counter);
-//        }
-//
-//        if (actionHandler.getActionList().size() - counter <= actionHandler.getActionDepthMeter()){
-//            System.out.println("list size : "+actionHandler.getActionList().size());
-//            System.out.println("counter : "+ counter);
-//            System.out.println("adm before "+actionHandler.getActionDepthMeter());
-//
-//
-//            actionHandler.setActionDepthMeter(actionHandler.getActionDepthMeter() - 1);
-//            System.out.println("adm after "+actionHandler.getActionDepthMeter());
-//        }
-//        actionHandler.getActionList().remove(counter);
-//
-//
-//    }
 
     public class PanelCloseListenerGenerator {
-
-
-
         public PanelCloseListener generate(){
             return new PanelCloseListener();
         }
@@ -571,7 +463,6 @@ public class PanelGrid extends JPanel {
         private int value;
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-//                System.out.println("S A I");
 
             if (evt.getPropertyName().equals("panel modified")){
 
@@ -616,38 +507,18 @@ public class PanelGrid extends JPanel {
                     PanelCloseListener closeListener = new PanelCloseListener();
                     panelMessages.addMessageUndo(message, action, watcher, closeListener);
 
-                    //check here for gamestate
-
-                    System.out.println(panelSource.getValue());
-                    System.out.println(evt.getNewValue());
-
-
-
-
-
                 }
                 checkGridState(panelSource.getValue(), (int)evt.getNewValue());
             }else if (evt.getPropertyName().equals("modified from button")){
-
-
-
                 int formerValue = (int) evt.getOldValue();
                 int newValue = (int) evt.getNewValue();
-                
-                System.out.println("old :"+formerValue+" new : "+newValue);
 
                 checkGridState(formerValue, newValue);
             }else if(evt.getPropertyName().equals("clueHandling")){
                 ObservableActionThing obsSource = (ObservableActionThing) evt.getSource();
                 PanelNumber panelSource = getPanelFromCoords(obsSource.getxCord(), obsSource.getyCord());
-                System.out.println("we are there apparently");
-                System.out.println("we were clue mode already : "+panelSource.isClueMode());
                 int clueValue = (int) evt.getOldValue();
                 boolean newState = (boolean) evt.getNewValue();
-
-
-                //TODO WE NEED A NEW ADDACTION METHOD TO ADD CLUEMETHODS
-//                actionHandler.addActionToList(panelSource, formerValue, newValue);
 
 
                 if (!checkCoherence){
@@ -661,42 +532,10 @@ public class PanelGrid extends JPanel {
                     }
 
                     msg = msg + "</body></html>";
-//
-//
-//
-//                    //checking and greying up already existing PlayPanels
-//                    updatePanelsEnabling(newValue, formerValue, panelSource);
-//
-//
-//                    Message message = new Message(msg, 1, null);
-////
-////                    //we get last element that we just added to put in button method
-////
-//                    HashMap<String, Object> action = actionHandler.actionList.get(actionHandler.actionList.size()-1);
-////
-//                    PlayPanelButtonListener watcher = new PlayPanelButtonListener();
-//                    PanelCloseListener closeListener = new PanelCloseListener();
-//                    panelMessages.addMessageUndo(message, action, watcher, closeListener);
-//
-//                    //check here for gamestate
-//
-//                    System.out.println(panelSource.getValue());
-//                    System.out.println(evt.getNewValue());
-//                    checkGridState(panelSource.getValue(), (int)evt.getNewValue());
-//
-//
-//
-//
+
                 }
-//
-
-
             }
         }
-
-
-
-
 
 
         public void updatePanelsEnabling(int newValue, int formerValue, PanelNumber panelSource) {
@@ -739,11 +578,10 @@ public class PanelGrid extends JPanel {
     }
 
     private void checkGridState(int formerValue, int newValue) {
-//        System.out.println("former "+formerValue);
-//        System.out.println("new "+newValue);
+
         SDLogicCenter logic = new SDLogicCenter();
         if (newValue != 0  && gridCompleteCheckEvent()){
-//            System.out.println("grid is complete !");
+
 
             this.submitButton.setEnabled(true);
             this.submitButton.setToolTipText(null);
@@ -791,9 +629,6 @@ public class PanelGrid extends JPanel {
     public void switchCoherenceChecking(){
         this.checkCoherence = !this.checkCoherence;
     }
-
-
-
 
 
     public class GridActionsHandler {
@@ -855,14 +690,15 @@ public class PanelGrid extends JPanel {
                 panel.changeNumber(formerValue);
                 if (!checkCoherence){
                     actionMngr.updatePanelsEnabling((Integer) lastElementInMap.get("formerValue"), (Integer)lastElementInMap.get("newValue"), panel);
-//                    System.out.println("Sometimes I m alone");
-                    checkGridState((Integer)lastElementInMap.get("newValue"), formerValue);
+                    int newVal = (Integer)lastElementInMap.get("newValue");
+                    checkGridState(newVal, formerValue);
+
                 }
                 actionDepthMeter++;
                 referenceToMenu.enableRedo();
 
             }else if (lastElementInMap.get("actionSource").equals("btnInPanel")){
-//                System.out.println("Undoing from button");
+
                 JButton btn = (JButton) lastElementInMap.get("button");
                 PanelOnRight.PlayMovePan playPan = (PanelOnRight.PlayMovePan) btn.getParent();
                 playPan.updateBtnListener();
@@ -878,7 +714,7 @@ public class PanelGrid extends JPanel {
                     if (!checkCoherence){
                         actionMngr.updatePanelsEnabling((Integer) lastElementInMap.get("newValue"), (Integer)lastElementInMap.get("formerValue"), pan);
                         checkGridState((Integer)lastElementInMap.get("newValue"), formerValue);
-//                        System.out.println("not mode undo btn Source undo action");
+
                     }
 
                 }else {
@@ -888,14 +724,14 @@ public class PanelGrid extends JPanel {
                     pan.changeNumber(newValue);
                     if (!checkCoherence){
                         actionMngr.updatePanelsEnabling((Integer) lastElementInMap.get("formerValue"), (Integer)lastElementInMap.get("newValue"), pan);
-//                        System.out.println("mode undo  btn Source undo action");
+
 
                         checkGridState((Integer) lastElementInMap.get("newValue"), newValue);
                     }
                 }
                 actionDepthMeter ++;
                 referenceToMenu.enableRedo();
-//                System.out.println("undoing");
+
             }
 
         }
@@ -911,12 +747,12 @@ public class PanelGrid extends JPanel {
                 actionDepthMeter--;
                 if (!checkCoherence){
                     actionMngr.updatePanelsEnabling((Integer) nextElementInMap.get("newValue"), (Integer)nextElementInMap.get("formerValue"), panel);
-//                    System.out.println("panel Source redo action");
+
                     checkGridState((Integer)nextElementInMap.get("formerValue"), (Integer) nextElementInMap.get("newValue"));
                 }
                 referenceToMenu.enableUndo();
             }else if (nextElementInMap.get("actionSource").equals("btnInPanel")){
-//                System.out.println("Redoing");
+
                 JButton btn = (JButton) nextElementInMap.get("button");
                 PanelOnRight.PlayMovePan playPan = (PanelOnRight.PlayMovePan) btn.getParent();
                 playPan.updateBtnListener();
@@ -926,13 +762,11 @@ public class PanelGrid extends JPanel {
                     btn.setText("Rétablir");
                     int formerValue = (Integer) action.get("formerValue");
                     pan.setValue(formerValue);
-//                    System.out.println("redo new Value : "+formerValue);
+
                     pan.changeNumber(formerValue);
                     if (!checkCoherence){
                         actionMngr.updatePanelsEnabling((Integer) nextElementInMap.get("formerValue"), (Integer)nextElementInMap.get("newValue"), pan);
-//                        System.out.println("not mode undo btn Source redo action");
-//                        System.out.println("boom boop");
-//                        checkGridState((Integer)nextElementInMap.get("formerValue"), (Integer) nextElementInMap.get("newValue"));
+
                         checkGridState((Integer) nextElementInMap.get("formerValue"), formerValue);
                     }
 
@@ -940,12 +774,9 @@ public class PanelGrid extends JPanel {
                     btn.setText("Anuler");
                     int newValue = (Integer) action.get("newValue");
                     pan.setValue(newValue);
-//                    System.out.println("redo new Value : "+newValue);
                     pan.changeNumber(newValue);
                     if (!checkCoherence){
                         actionMngr.updatePanelsEnabling((Integer) nextElementInMap.get("newValue"), (Integer)nextElementInMap.get("formerValue"), pan);
-//                        System.out.println("Smode undo btn Source redo action");
-//                        System.out.println("plif plaf");
                         checkGridState((Integer)nextElementInMap.get("formerValue"), newValue);
                     }
 
@@ -953,7 +784,6 @@ public class PanelGrid extends JPanel {
 
                 actionDepthMeter --;
                 referenceToMenu.enableUndo();
-//                System.out.println("redoing/");
 
             }
         }

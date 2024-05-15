@@ -26,9 +26,6 @@ public class PanelOnRight extends JPanel {
     BorderLayout RightPanelLayout;
 
 
-    public void setScrollPane(JScrollPane scrollPane) {
-        this.scrollPane = scrollPane;
-    }
 
     public JScrollPane getScrollPane() {
         return scrollPane;
@@ -38,29 +35,14 @@ public class PanelOnRight extends JPanel {
         return panelInScroller;
     }
 
-    public void setPanelInScroller(JPanel panelInScroller) {
-        this.panelInScroller = panelInScroller;
-    }
 
     public ArrayList<PanelMessage> getListPanels() {
         return listPanels;
     }
 
-    public void setListPanels(ArrayList<PanelMessage> listPanels) {
-        this.listPanels = listPanels;
-    }
 
-    public BorderLayout getRightPanelLayout() {
-        return RightPanelLayout;
-    }
 
-    public void setRightPanelLayout(BorderLayout rightPanelLayout) {
-        RightPanelLayout = rightPanelLayout;
-    }
 
-    public Color getMsgBackgroundColor() {
-        return msgBackgroundColor;
-    }
 
     public void setMsgBackgroundColor(Color msgBackgroundColor) {
         this.msgBackgroundColor = msgBackgroundColor;
@@ -153,25 +135,6 @@ public class PanelOnRight extends JPanel {
         }
     }
 
-    public void removeMsg(JPanel msg){
-        Component[] allPanelsInScroller = panelInScroller.getComponents();
-        boolean remove = false;
-        JPanel toRemove = null;
-        for (JPanel pan : listPanels){
-            if (pan == msg){
-                toRemove = pan;
-                remove = true;
-
-            }
-        }
-        if (remove){
-            panelInScroller.remove(toRemove);
-            panelInScroller.revalidate();
-            panelInScroller.repaint();
-            listPanels.remove(toRemove);
-        }
-    }
-
 
     private void initScrollPane() {
         this.scrollPane = new JScrollPane(this.panelInScroller, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -185,12 +148,9 @@ public class PanelOnRight extends JPanel {
 
 
     public void addMessage(Message m, PanelGrid.PanelCloseListener listener){
-
-
         PanelMessage panelMessage = new PanelMessage(m, this.panMsgBorderMotif, this.msgBackgroundColor, listener);
         listPanels.add(panelMessage);
         getPanelInScroller().add(panelMessage);
-
 
         getPanelInScroller().revalidate();
         getPanelInScroller().repaint();
@@ -269,7 +229,6 @@ public class PanelOnRight extends JPanel {
     }
 
     public void restorePlayMessages(){
-
         for (JPanel message : this.listPanelsPlaying){
             getPanelInScroller().add(message);
         }
@@ -277,16 +236,9 @@ public class PanelOnRight extends JPanel {
 
     }
 
-    public ImageIcon getBackgroundImage() {
-        return backgroundImage;
-    }
 
     public void setBackgroundImage(ImageIcon backgroundImage) {
         this.backgroundImage = backgroundImage;
-    }
-
-    public ImageIcon getPanMsgBorderMotif() {
-        return panMsgBorderMotif;
     }
 
     public void setPanMsgBorderMotif(ImageIcon panMsgBorderMotif) {
@@ -338,7 +290,6 @@ public class PanelOnRight extends JPanel {
         private int height = 64;
             Dimension maximumSize = new Dimension(maxWidth, height);
 
-
             PanelMessage(Message msge, ImageIcon panMsgBorderMotif, Color backgroundColor, PanelGrid.PanelCloseListener closeListener){
 
                 this.colorMsg = backgroundColor;
@@ -352,10 +303,6 @@ public class PanelOnRight extends JPanel {
                 closeWatcher.addPropertyChangeListener(this.closeListener);
                 this.closeWatcher.setBtnCloseInPanel(this.closeBtnToggle);
                 this.setLayout(this.layout);
-//                if (this.colorMsg != null){
-//                    this.closeButtonStandin.setBackground(colorMsg);
-//                }
-
 
 
 
@@ -370,14 +317,6 @@ public class PanelOnRight extends JPanel {
                 maxHeight = height * msge.getMsgLength();
                 updateMaxSize();
                 buildPanelLayout();
-
-//                this.layout = new FlowLayout(FlowLayout.LEFT,30,0);
-
-//                this.lblPan.setBorder(BorderFactory.createEmptyBorder(0,0,0, this.getWidth()/11));
-
-
-
-
 
 
              }////////////////////////////////////////////////////
@@ -427,9 +366,6 @@ public class PanelOnRight extends JPanel {
             gb.anchor = GridBagConstraints.FIRST_LINE_END;
             this.add(this.closeBtnToggle, gb);
             JPanel standin = this.closeBtnToggle;
-
-
-
 
 
             listenerImplementation();
@@ -488,7 +424,6 @@ public class PanelOnRight extends JPanel {
             this.removeAll();
             buildPanelLayout();
 
-
         }
 
 
@@ -506,56 +441,24 @@ public class PanelOnRight extends JPanel {
         //getters and setters
 
 
-        public int getMaxHeight() {
-            return maxHeight;
-        }
 
-        public void setMaxHeight(int maxHeight) {
-            this.maxHeight = maxHeight;
-        }
         public PanelCloseButton getCloseBtnToggle() {
             return closeBtnToggle;
         }
 
 
-        public int getMaxWidth() {
-            return maxWidth;
-        }
 
         public void setMaxWidth(int maxWidth) {
             this.maxWidth = maxWidth;
         }
 
-        public Message getMsg() {
-            return msg;
-        }
 
-        public void setMsg(Message msg) {
-            this.msg = msg;
-        }
 
-        public JLabel getLblPan() {
-            return lblPan;
-        }
 
-        public void setLblPan(JLabel lblPan) {
-            this.lblPan = lblPan;
-        }
 
         public JButton getBtnPan() {
             return btnPan;
         }
-
-        public void setBtnPan(JButton btnPan) {
-            this.btnPan = btnPan;
-        }
-
-        public Color getColorMsg() {
-            return colorMsg;
-        }
-        //TODO
-
-
 
 
 
@@ -774,12 +677,6 @@ public class PanelOnRight extends JPanel {
 
 
 
-    }
-
-
-
-    public static void main(String[] args){
-        PanelOnRight pan = new PanelOnRight();
     }
 
 

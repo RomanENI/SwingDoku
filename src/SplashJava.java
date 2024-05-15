@@ -1,6 +1,10 @@
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.ArrayList;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class SplashJava extends JFrame {
@@ -11,7 +15,15 @@ public class SplashJava extends JFrame {
 
     public SplashJava() {
         instance = SwingDokuWindow.giveInstance();
-        splashScreen = Toolkit.getDefaultToolkit().getImage("Resources/loadScreen/swingdoku loading.jpg");
+        BufferedImage img = null;
+        String fullPath = "/loadScreen/swingdoku loading.JPG";
+        try {
+            img = ImageIO.read(getClass().getResourceAsStream(fullPath));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        splashScreen = img;
+//        splashScreen = Toolkit.getDefaultToolkit().getImage("Resources/loadScreen/swingdoku loading.JPG");
         // Create ImageIcon from Image
         imageIcon = new ImageIcon(splashScreen);
         // Set JWindow size from image size
@@ -28,7 +40,30 @@ public class SplashJava extends JFrame {
 //        setVisible(true)
 
 
+        ArrayList icons = loadIcons();
+        this.setIconImages(icons);
         initMethods();
+    }
+
+    private ArrayList loadIcons() {
+        String[] keys = new String[] {"1616", "2424", "3232", "6464"};
+
+        ArrayList<Image> list = new ArrayList<>();
+        for(String key : keys){
+            BufferedImage img;
+            String fullPath = "/windowIcons/lauchIcon" + key + ".png";
+            try {
+                img = ImageIO.read(getClass().getResourceAsStream(fullPath));
+                Image image = img;
+                list.add(image);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
+        return list;
+
     }
 
     private void initMethods() {
